@@ -9,7 +9,7 @@ class HomeScreen extends React.Component {
         title: 'Home',
         headerLeft:
             <TouchableOpacity onPress={() => { navigation.openDrawer() }} >
-                <FastImage source={AppStyles.iconSet.menu} />
+                <FastImage style={styles.userPhoto} resizeMode={FastImage.resizeMode.cover} source={AppStyles.iconSet.menu} />
             </TouchableOpacity>,
     });
 
@@ -32,6 +32,11 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         flex: 1,
     },
+    userPhoto: {
+        width: 40,
+        height: 40,
+        marginLeft: 5,
+    }
 });
 
 const mapStateToProps = state => ({
