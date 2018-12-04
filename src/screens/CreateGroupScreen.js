@@ -19,11 +19,11 @@ class CreateGroupScreen extends React.Component {
         super(props);
 
         const data = apiData.friends.map((item) => {
-            item.checked = true;
+            item.checked = false;
             return item;
         });
         this.state = {
-            users: data
+            friends: data
         };
     }
 
@@ -39,6 +39,14 @@ class CreateGroupScreen extends React.Component {
 
     onCheck = (friend) => {
         friend.checked = !friend.checked;
+        const newFriends = this.state.friends.map(item => {
+            if (item.id == friend.id) {
+                return friend;
+            } else {
+                return item;
+            }
+        });
+        this.setState({friends: newFriends});
     }
 
     renderItem = ({ item }) => (
@@ -57,7 +65,7 @@ class CreateGroupScreen extends React.Component {
     render() {
         return (
             <FlatList
-                data={this.state.users}
+                data={this.state.friends}
                 renderItem={this.renderItem}
                 keyExtractor={item => `${item.id}`}
                 initialNumToRender={5}
