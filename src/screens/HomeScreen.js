@@ -5,6 +5,7 @@ import FastImage from 'react-native-fast-image';
 import { connect } from 'react-redux';
 import AppStyles from '../AppStyles';
 import apiData from '../dummy_data.json';
+import ChatIconView from '../components/ChatIconView';
 
 class HomeScreen extends React.Component {
     static navigationOptions = ({ navigation }) => ({
@@ -51,12 +52,13 @@ class HomeScreen extends React.Component {
     renderChatItem = ({ item }) => (
         <TouchableOpacity onPress={() => this.onPressChat(item)}>
             <View style={styles.chatItemContainer}>
-                <FastImage style={styles.chatItemIcon} source={{ uri: item.channel_participation[0].profilePictureURL }} />
+                {/* <FastImage style={styles.chatItemIcon} source={{ uri: item.channel_participation[0].profilePictureURL }} /> */}
+                <ChatIconView style={styles.chatItemIcon} channel_participation={item.channel_participation}/>
                 <View style={styles.chatItemContent}>
                     <Text style={styles.chatFriendName}>{item.name}</Text>
                     <View style={styles.content}>
                         <Text style={styles.message}>{item.lastMesssage}</Text>
-                        <Text style={styles.time}>{item.lastMessageDate}</Text>
+                        <Text style={styles.time}> • {item.lastMessageDate}</Text>
                     </View>
                 </View>
             </View>
@@ -163,7 +165,7 @@ const styles = StyleSheet.create({
     },
     chatItemIcon: {
         height: 90,
-        borderRadius: 45,
+        // borderRadius: 45,
         width: 90,
     },
     chatItemContent: {
@@ -181,6 +183,7 @@ const styles = StyleSheet.create({
         color: AppStyles.colorSet.mainSubtextColor
     },
     time: {
+        marginLeft: 5,
         color: AppStyles.colorSet.mainSubtextColor
     }
 });

@@ -44,9 +44,10 @@
       "channel_participation": [
         {
           "name": "Trump",
+          "online": true,
           "profilePictureURL": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTYZSxnlQgZL31PoDWEHDcM4LLondqOpS6ZFKVYAs0x6ATlFBZ5"
         }
-      ]
+      ]      
     },
     {
       "channelID": 2,
@@ -58,10 +59,6 @@
         "profilePictureURL": "https://1ofdmq2n8tc36m6i46scovo2e-wpengine.netdna-ssl.com/wp-content/uploads/2014/04/Steven_Hallam-slide.jpg"
       },
       "channel_participation": [
-        {
-          "name": "Tom",
-          "profilePictureURL": "https://1ofdmq2n8tc36m6i46scovo2e-wpengine.netdna-ssl.com/wp-content/uploads/2014/04/Steven_Hallam-slide.jpg"
-        },
         {
           "name": "Jerry",
           "profilePictureURL": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQdKJxRmMYYDm5WDjCH8zck5UiXlsyYryZ4c8BTv7cRIlbJ-vA9"
@@ -83,8 +80,9 @@
       },
       "channel_participation": [
         {
+          "online": false,
           "name": "Trump",
-          "profilePictureURL": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTYZSxnlQgZL31PoDWEHDcM4LLondqOpS6ZFKVYAs0x6ATlFBZ5"
+          "profilePictureURL": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSN1yluZMpjcPLDrLn1cvbDe-R-uIte0kl5t4q6PyfUipYBRstD"
         }
       ]
     },
@@ -99,12 +97,8 @@
       },
       "channel_participation": [
         {
-          "name": "Tom",
-          "profilePictureURL": "https://1ofdmq2n8tc36m6i46scovo2e-wpengine.netdna-ssl.com/wp-content/uploads/2014/04/Steven_Hallam-slide.jpg"
-        },
-        {
           "name": "Jerry",
-          "profilePictureURL": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQdKJxRmMYYDm5WDjCH8zck5UiXlsyYryZ4c8BTv7cRIlbJ-vA9"
+          "profilePictureURL": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUo2MvXw1s6UqOaItsYFuLt_4mjWFek8xIMlnK6YAy3DxNpxVv"
         },
         {
           "name": "Henry",
@@ -123,8 +117,26 @@
       },
       "channel_participation": [
         {
+          "online": true,
           "name": "Trump",
-          "profilePictureURL": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTYZSxnlQgZL31PoDWEHDcM4LLondqOpS6ZFKVYAs0x6ATlFBZ5"
+          "profilePictureURL": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSN1yluZMpjcPLDrLn1cvbDe-R-uIte0kl5t4q6PyfUipYBRstD"
+        }
+      ]
+    },
+    {
+      "channelID": 6,
+      "lastMesssage": "Wow",
+      "lastMessageDate": "2018-07-08 12:13:12",
+      "name": "Mark Horrowitz",
+      "creator": {
+        "name": "Tom",
+        "profilePictureURL": "https://1ofdmq2n8tc36m6i46scovo2e-wpengine.netdna-ssl.com/wp-content/uploads/2014/04/Steven_Hallam-slide.jpg"
+      },
+      "channel_participation": [
+        {
+          "online": true,
+          "name": "Trump",
+          "profilePictureURL": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSmC0gv9dmnCx29dIhEW52y4sXxbGVzNwV-XcpyaGd-Efuzg1Ns"
         }
       ]
     }

@@ -9,6 +9,7 @@ const _colorSet = {
   mainTextColor : '#000000',
   mainSubtextColor : '#7e7e7e',
   hairlineColor: '#d6d6d6',
+  onlineMarkColor: '#41C61B'
 };
 
 const _fontSet = {
