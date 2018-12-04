@@ -1,15 +1,15 @@
-import React from 'react';
-import { Animated, Easing, Image, StyleSheet } from 'react-native';
-import { connect } from 'react-redux';
-import { DrawerNavigator, createStackNavigator, createBottomTabNavigator } from 'react-navigation';
+import { Animated, Easing, StyleSheet } from 'react-native';
+import { createStackNavigator, DrawerNavigator } from 'react-navigation';
 import { createReactNavigationReduxMiddleware, reduxifyNavigator } from 'react-navigation-redux-helpers';
-import HomeScreen from '../screens/HomeScreen';
-import ChatScreen from '../screens/ChatScreen';
-import LoginScreen from '../screens/LoginScreen';
-import SignupScreen from '../screens/SignupScreen';
-import WelcomeScreen from '../screens/WelcomeScreen';
+import { connect } from 'react-redux';
 import AppStyles from '../AppStyles';
 import DrawerContainer from '../components/DrawerContainer';
+import ChatScreen from '../screens/ChatScreen';
+import HomeScreen from '../screens/HomeScreen';
+import LoginScreen from '../screens/LoginScreen';
+import SearchScreen from '../screens/SearchScreen';
+import SignupScreen from '../screens/SignupScreen';
+import WelcomeScreen from '../screens/WelcomeScreen';
 
 const noTransitionConfig = () => ({
     transitionSpec: {
@@ -45,9 +45,9 @@ const HomeStack = createStackNavigator({
     Home: { screen: HomeScreen },
     Chat: { screen: ChatScreen },
     Friends: { screen: HomeScreen },
-    Search: { screen: HomeScreen },
+    Search: { screen: SearchScreen },
 }, {
-        initialRouteName: 'Home',
+        initialRouteName: 'Search',
         headerMode: 'float',
 
         headerLayoutPreset: 'center',
