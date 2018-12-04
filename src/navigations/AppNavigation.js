@@ -42,6 +42,8 @@ const LoginStack = createStackNavigator({
 
 const HomeStack = createStackNavigator({
     Home: { screen: HomeScreen },
+    Friends: { screen: HomeScreen },
+    Search: { screen: HomeScreen },
 }, {
         initialRouteName: 'Home',
         headerMode: 'float',

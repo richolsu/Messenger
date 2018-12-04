@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, View, FlatList, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { ScrollView, View, FlatList, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { SearchBar } from "react-native-elements";
 import FastImage from 'react-native-fast-image';
 import { connect } from 'react-redux';
@@ -11,11 +11,11 @@ class HomeScreen extends React.Component {
         title: 'Chats',
         headerLeft:
             <TouchableOpacity style={styles.rightBtncontainer} onPress={() => { navigation.openDrawer() }} >
-                <FastImage style={styles.rightBtnIcon} resizeMode={FastImage.resizeMode.cover} source={AppStyles.iconSet.menu} />
+                <Image style={styles.rightBtnIcon} source={AppStyles.iconSet.menu} />
             </TouchableOpacity>,
         headerRight:
             <TouchableOpacity style={styles.rightBtncontainer} >
-                <FastImage style={styles.rightBtnIcon} source={AppStyles.iconSet.inscription} />
+                <Image style={styles.rightBtnIcon} source={AppStyles.iconSet.inscription} />
             </TouchableOpacity>
     });
 
@@ -116,6 +116,7 @@ const styles = StyleSheet.create({
         marginRight: 10
     },
     rightBtnIcon: {
+        tintColor: AppStyles.colorSet.mainThemeForegroundColor,
         width: 25,
         height: 25,
     },

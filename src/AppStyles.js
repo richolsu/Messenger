@@ -36,7 +36,7 @@ const _iconSet = {
   chat: require('../assets/icons/chat-icon.png'),
   close: require('../assets/icons/close-x-icon.png'),
   checked: require('../assets/icons/checked-icon.png'),
-  friend: require('../assets/icons/friends-icon.png'),
+  friends: require('../assets/icons/friends-icon.png'),
   inscription: require('../assets/icons/inscription-icon.png'),
   menu: require('../assets/icons/menu.png'),
   private_chat: require('../assets/icons/private-chat-icon.png'),
