@@ -15,7 +15,7 @@ class HomeScreen extends React.Component {
                 <Image style={styles.rightBtnIcon} source={AppStyles.iconSet.menu} />
             </TouchableOpacity>,
         headerRight:
-            <TouchableOpacity style={styles.rightBtncontainer} >
+            <TouchableOpacity style={styles.rightBtncontainer} onPress={() => navigation.state.params.onCreate()}>
                 <Image style={styles.rightBtnIcon} source={AppStyles.iconSet.inscription} />
             </TouchableOpacity>
     });
@@ -28,6 +28,16 @@ class HomeScreen extends React.Component {
         }
     }
 
+    componentDidMount() {
+        this.props.navigation.setParams({
+            onCreate: this.onCreate
+        });
+    }
+
+    onCreate = () => {
+        this.props.navigation.navigate('CreateGroup');
+    }
+    
     onPressFriend = (friend) => {
 
     }

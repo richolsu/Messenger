@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import AppStyles from '../AppStyles';
 import DrawerContainer from '../components/DrawerContainer';
 import ChatScreen from '../screens/ChatScreen';
+import CreateGroupScreen from '../screens/CreateGroupScreen';
 import HomeScreen from '../screens/HomeScreen';
 import LoginScreen from '../screens/LoginScreen';
 import SearchScreen from '../screens/SearchScreen';
@@ -44,10 +45,11 @@ const LoginStack = createStackNavigator({
 const HomeStack = createStackNavigator({
     Home: { screen: HomeScreen },
     Chat: { screen: ChatScreen },
+    CreateGroup: { screen: CreateGroupScreen },
     Friends: { screen: HomeScreen },
     Search: { screen: SearchScreen },
 }, {
-        initialRouteName: 'Search',
+        initialRouteName: 'CreateGroup',
         headerMode: 'float',
 
         headerLayoutPreset: 'center',
