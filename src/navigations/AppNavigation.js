@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { DrawerNavigator, createStackNavigator, createBottomTabNavigator } from 'react-navigation';
 import { createReactNavigationReduxMiddleware, reduxifyNavigator } from 'react-navigation-redux-helpers';
 import HomeScreen from '../screens/HomeScreen';
+import ChatScreen from '../screens/ChatScreen';
 import LoginScreen from '../screens/LoginScreen';
 import SignupScreen from '../screens/SignupScreen';
 import WelcomeScreen from '../screens/WelcomeScreen';
@@ -42,6 +43,7 @@ const LoginStack = createStackNavigator({
 
 const HomeStack = createStackNavigator({
     Home: { screen: HomeScreen },
+    Chat: { screen: ChatScreen },
     Friends: { screen: HomeScreen },
     Search: { screen: HomeScreen },
 }, {

@@ -46,7 +46,7 @@ class HomeScreen extends React.Component {
     };
 
     onPressChat = (chat) => {
-
+        this.props.navigation.navigate('Chat', { chat: chat });
     }
 
     renderChatItem = ({ item }) => (
