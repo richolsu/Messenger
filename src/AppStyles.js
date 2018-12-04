@@ -4,10 +4,10 @@ const WINDOW_WIDTH = Dimensions.get('window').width;
 const WINDOW_HEIGHT = Dimensions.get('window').height;
 
 const _colorSet = {
-  mainThemeBackgroundColor : 'white',
-  mainThemeForegroundColor : '#3068CC',
-  mainTextColor : '#000000',
-  mainSubtextColor : '#7e7e7e',
+  mainThemeBackgroundColor: 'white',
+  mainThemeForegroundColor: '#3068CC',
+  mainTextColor: '#000000',
+  mainSubtextColor: '#7e7e7e',
   hairlineColor: '#d6d6d6',
   onlineMarkColor: '#41C61B'
 };
@@ -25,7 +25,7 @@ const _fontSet = {
 const _sizeSet = {
   buttonWidth: '70%',
   inputWidth: '80%',
-  radius: 25,  
+  radius: 25,
 }
 
 const _iconSet = {
@@ -47,11 +47,43 @@ const _iconSet = {
   logout: require('../assets/icons/shutdown.png'),
 }
 
+const _styleSet = {
+  menuBtn: {
+    container: {
+      backgroundColor: _colorSet.hairlineColor,
+      borderRadius: 22.5,
+      padding: 10,
+      marginLeft: 10,
+      marginRight: 10
+    },
+    icon: {
+      tintColor: _colorSet.mainThemeForegroundColor,
+      width: 25,
+      height: 25,
+    },
+  },
+  searchBar: {
+    container: {
+      backgroundColor: 'transparent', 
+      borderBottomColor: 'transparent',
+      borderTopColor: 'transparent', 
+      flex: 1
+    },
+    input: { 
+      backgroundColor: 'rgba(0.9, 0.9, 0.9, 0.1)', 
+      borderRadius: 10, 
+      color: 'black' 
+    }
+  }
+
+}
+
 const StyleDict = {
   colorSet: _colorSet,
   iconSet: _iconSet,
   sizeSet: _sizeSet,
   fontSet: _fontSet,
+  styleSet: _styleSet,
   windowW: WINDOW_WIDTH,
   windowH: WINDOW_HEIGHT,
 };

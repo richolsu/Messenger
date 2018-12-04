@@ -11,8 +11,8 @@ class HomeScreen extends React.Component {
     static navigationOptions = ({ navigation }) => ({
         title: 'Chats',
         headerLeft:
-            <TouchableOpacity style={styles.rightBtncontainer} onPress={() => { navigation.openDrawer() }} >
-                <Image style={styles.rightBtnIcon} source={AppStyles.iconSet.menu} />
+            <TouchableOpacity style={AppStyles.styleSet.menuBtn.container} onPress={() => { navigation.openDrawer() }} >
+                <Image style={AppStyles.styleSet.menuBtn.icon} source={AppStyles.iconSet.menu} />
             </TouchableOpacity>,
         headerRight:
             <TouchableOpacity style={styles.rightBtncontainer} onPress={() => navigation.state.params.onCreate()}>
@@ -37,7 +37,7 @@ class HomeScreen extends React.Component {
     onCreate = () => {
         this.props.navigation.navigate('CreateGroup');
     }
-    
+
     onPressFriend = (friend) => {
 
     }
@@ -62,8 +62,7 @@ class HomeScreen extends React.Component {
     renderChatItem = ({ item }) => (
         <TouchableOpacity onPress={() => this.onPressChat(item)}>
             <View style={styles.chatItemContainer}>
-                {/* <FastImage style={styles.chatItemIcon} source={{ uri: item.channel_participation[0].profilePictureURL }} /> */}
-                <ChatIconView style={styles.chatItemIcon} channel_participation={item.channel_participation}/>
+                <ChatIconView style={styles.chatItemIcon} channel_participation={item.channel_participation} />
                 <View style={styles.chatItemContent}>
                     <Text style={styles.chatFriendName}>{item.name}</Text>
                     <View style={styles.content}>
@@ -83,8 +82,8 @@ class HomeScreen extends React.Component {
         return (
             <ScrollView style={styles.container}>
                 <SearchBar
-                    containerStyle={styles.searchBarContainer}
-                    inputStyle={styles.searchBarInput}
+                    containerStyle={AppStyles.styleSet.searchBar.container}
+                    inputStyle={AppStyles.styleSet.searchBar.input}
                     showLoading
                     clearIcon={false}
                     searchIcon={true}
@@ -119,28 +118,6 @@ const styles = StyleSheet.create({
     container: {
         backgroundColor: 'white',
         flex: 1,
-    },
-    rightBtncontainer: {
-        backgroundColor: AppStyles.colorSet.hairlineColor,
-        borderRadius: 22.5,
-        padding: 10,
-        marginLeft: 10,
-        marginRight: 10
-    },
-    rightBtnIcon: {
-        tintColor: AppStyles.colorSet.mainThemeForegroundColor,
-        width: 25,
-        height: 25,
-    },
-    searchBarContainer: {
-        backgroundColor: 'transparent',
-        borderBottomColor: 'transparent',
-        borderTopColor: 'transparent',
-    },
-    searchBarInput: {
-        backgroundColor: 'rgba(0.9, 0.9, 0.9, 0.1)',
-        borderRadius: 10,
-        color: 'black'
     },
     userPhoto: {
         width: 40,

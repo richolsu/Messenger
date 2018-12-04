@@ -7,7 +7,7 @@ import FastImage from 'react-native-fast-image';
 import { connect } from 'react-redux';
 import TextButton from 'react-native-button';
 
-class SearchScreen extends React.Component {
+class FriendsScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
         const { params = {} } = navigation.state;
         return {
@@ -45,8 +45,8 @@ class SearchScreen extends React.Component {
         });
     }
 
-    onPress = (item) => {
-        this.props.navigation.navigate('Detail', { item: item });
+    onUnfriend = (item) => {
+        alert("Unfriend" + item.name);
     }
 
     renderItem = ({ item }) => (
@@ -54,8 +54,7 @@ class SearchScreen extends React.Component {
             <View style={styles.container}>
                 <FastImage style={styles.photo} source={{ uri: item.profilePictureURL }} />
                 <Text style={styles.name}>{item.firstName}</Text>
-                <TextButton style={styles.add} onPress={() => this.onAdd(item)} >Add</TextButton>
-                <TextButton style={styles.accept} onPress={() => this.onAccept(item)} >Accept</TextButton>
+                <TextButton style={styles.add} onPress={() => this.onUnfriend(item)} >Unfriend</TextButton>
             </View>
         </TouchableOpacity>
     );
@@ -133,4 +132,4 @@ const mapStateToProps = state => ({
     user: state.auth.user,
 });
 
-export default connect(mapStateToProps)(SearchScreen);
+export default connect(mapStateToProps)(FriendsScreen);

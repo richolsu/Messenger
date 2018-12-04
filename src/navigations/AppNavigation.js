@@ -6,9 +6,10 @@ import AppStyles from '../AppStyles';
 import DrawerContainer from '../components/DrawerContainer';
 import ChatScreen from '../screens/ChatScreen';
 import CreateGroupScreen from '../screens/CreateGroupScreen';
+import SearchScreen from '../screens/SearchScreen';
+import FriendsScreen from '../screens/FriendsScreen';
 import HomeScreen from '../screens/HomeScreen';
 import LoginScreen from '../screens/LoginScreen';
-import SearchScreen from '../screens/SearchScreen';
 import SignupScreen from '../screens/SignupScreen';
 import WelcomeScreen from '../screens/WelcomeScreen';
 
@@ -45,11 +46,11 @@ const LoginStack = createStackNavigator({
 const HomeStack = createStackNavigator({
     Home: { screen: HomeScreen },
     Chat: { screen: ChatScreen },
-    CreateGroup: { screen: CreateGroupScreen },
-    Friends: { screen: HomeScreen },
+    Friends: { screen: FriendsScreen },
     Search: { screen: SearchScreen },
+    CreateGroup: { screen: CreateGroupScreen },
 }, {
-        initialRouteName: 'CreateGroup',
+        initialRouteName: 'Home',
         headerMode: 'float',
 
         headerLayoutPreset: 'center',
@@ -61,10 +62,40 @@ const HomeStack = createStackNavigator({
     }
 );
 
+const FriendsStack = createStackNavigator({
+    Friends: { screen: FriendsScreen },
+}, {
+        initialRouteName: 'Friends',
+        headerMode: 'float',
+
+        headerLayoutPreset: 'center',
+        navigationOptions: ({ navigation }) => ({
+            headerTintColor: AppStyles.colorSet.mainThemeForegroundColor,
+            headerTitleStyle: styles.headerTitleStyle,
+        }),
+        cardStyle: { backgroundColor: '#FFFFFF' },
+    }
+);
+
+const SearchStack = createStackNavigator({
+    Search: { screen: SearchScreen },
+}, {
+        initialRouteName: 'Search',
+        headerMode: 'float',
+        headerLayoutPreset: 'center',
+        navigationOptions: ({ navigation }) => ({
+            headerTintColor: AppStyles.colorSet.mainThemeForegroundColor,
+            headerTitleStyle: styles.headerTitleStyle,
+        }),
+        cardStyle: { backgroundColor: '#FFFFFF' },
+    }
+);
 
 // drawer stack
 const DrawerStack = DrawerNavigator({
-    HomeStack: HomeStack
+    HomeStack: HomeStack,
+    FriendsStack: FriendsStack,
+    SearchStack: SearchStack,
 }, {
         drawerPosition: 'left',
         initialRouteName: 'HomeStack',
