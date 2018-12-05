@@ -67,8 +67,6 @@ const FriendsStack = createStackNavigator({
 }, {
         initialRouteName: 'Friends',
         headerMode: 'float',
-
-        headerLayoutPreset: 'center',
         navigationOptions: ({ navigation }) => ({
             headerTintColor: AppStyles.colorSet.mainThemeForegroundColor,
             headerTitleStyle: styles.headerTitleStyle,
@@ -82,7 +80,6 @@ const SearchStack = createStackNavigator({
 }, {
         initialRouteName: 'Search',
         headerMode: 'float',
-        headerLayoutPreset: 'center',
         navigationOptions: ({ navigation }) => ({
             headerTintColor: AppStyles.colorSet.mainThemeForegroundColor,
             headerTitleStyle: styles.headerTitleStyle,

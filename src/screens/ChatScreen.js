@@ -1,17 +1,19 @@
 import React from 'react';
-import { ScrollView, View, FlatList, Text, TextInput, Image, TouchableOpacity, StyleSheet } from 'react-native';
-import { SearchBar } from "react-native-elements";
+import { FlatList, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import TextButton from 'react-native-button';
 import FastImage from 'react-native-fast-image';
 import { connect } from 'react-redux';
 import AppStyles from '../AppStyles';
-import ChatIconView from '../components/ChatIconView';
 import apiData from '../dummy_data.json';
+import ActionSheet from 'react-native-actionsheet'
 
 const MY_ID = '33';
 
 class ChatScreen extends React.Component {
     static navigationOptions = ({ navigation }) => ({
         title: navigation.state.params.chat.name,
+        headerRight:
+            <TextButton style={AppStyles.styleSet.rightNavButton} onPress={() => navigation.state.params.onSetting()} >Setting</TextButton>
     });
 
     constructor(props) {
@@ -27,7 +29,33 @@ class ChatScreen extends React.Component {
         }
     }
 
+    componentDidMount() {
+        this.props.navigation.setParams({
+            onSetting: this.onSetting
+        });
+    }
 
+    onSettingActionDone = (index) => {
+        if (index == 0) {
+            alert("Open Rename ");
+        } else if (index == 1) {
+            this.onLeave();
+        }
+    }
+
+    onConfirmActionDone = (index) => {
+        if (index == 0) {
+            alert("Leaved");
+        }
+    }
+
+    onSetting = () => {
+        this.settingActionSheet.show();
+    }
+
+    onLeave = () => {
+        this.confirmLeaveActionSheet.show();
+    }
 
     onPressChat = (chat) => {
 
@@ -88,6 +116,22 @@ class ChatScreen extends React.Component {
                         <Image style={styles.icon} source={AppStyles.iconSet.share} />
                     </TouchableOpacity>
                 </View>
+                <ActionSheet
+                    ref={o => this.settingActionSheet = o}
+                    title={'Group Settings'}
+                    options={['Rename Group', 'Leave Group', 'Cancel']}
+                    cancelButtonIndex={2}
+                    destructiveButtonIndex={1}
+                    onPress={(index) => { this.onSettingActionDone(index) }}
+                />
+                <ActionSheet
+                    ref={o => this.confirmLeaveActionSheet = o}
+                    title={'Are you sure?'}
+                    options={['Confirm', 'Cancel']}
+                    cancelButtonIndex={1}
+                    destructiveButtonIndex={0}
+                    onPress={(index) => { this.onConfirmActionDone(index) }}
+                />
             </View>
         );
     }

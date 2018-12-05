@@ -74,6 +74,9 @@ const _styleSet = {
       borderRadius: 10, 
       color: 'black' 
     }
+  },
+  rightNavButton: {
+    marginRight: 10,
   }
 
 }
