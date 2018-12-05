@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, View, FlatList, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { ScrollView, View, FlatList, Text, TextInput, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { SearchBar } from "react-native-elements";
 import FastImage from 'react-native-fast-image';
 import { connect } from 'react-redux';
@@ -7,6 +7,7 @@ import AppStyles from '../AppStyles';
 import apiData from '../dummy_data.json';
 import ChatIconView from '../components/ChatIconView';
 import firebase from 'react-native-firebase';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 class HomeScreen extends React.Component {
     static navigationOptions = ({ navigation }) => ({
@@ -160,21 +161,24 @@ class HomeScreen extends React.Component {
         </TouchableOpacity>
     );
 
-    onTapSearch() {
-        alert("search");
+    onTapSearch = () => {
+        this.props.navigation.navigate('SearchStack');
     }
 
     render() {
         return (
             <ScrollView style={styles.container}>
-                <SearchBar
-                    containerStyle={AppStyles.styleSet.searchBar.container}
-                    inputStyle={AppStyles.styleSet.searchBar.input}
-                    showLoading
-                    clearIcon={false}
-                    searchIcon={true}
-                    placeholder='Search' />
-
+                <TouchableOpacity onPress={this.onTapSearch}>
+                    <View style={styles.searchSection}>
+                        <Icon style={styles.searchIcon} name="ios-search" size={15} color={AppStyles.colorSet.inputBgColor} />
+                        <TextInput
+                            editable={false}
+                            style={styles.input}
+                            placeholder="Search"
+                            underlineColorAndroid="transparent"
+                        />
+                    </View>
+                </TouchableOpacity>
                 <View style={styles.friends}>
                     <FlatList
                         horizontal={true}
@@ -201,6 +205,26 @@ class HomeScreen extends React.Component {
 }
 
 const styles = StyleSheet.create({
+
+    searchSection: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: AppStyles.colorSet.inputBgColor,
+        margin: 8,
+        borderRadius: 8,
+    },
+    searchIcon: {
+        padding: 10,
+        paddingRight: 0,
+    },
+    input: {
+        flex: 1,
+        padding: 5,
+        paddingLeft: 0,
+        backgroundColor: 'transparent',
+    },
     container: {
         backgroundColor: 'white',
         flex: 1,
@@ -211,6 +235,7 @@ const styles = StyleSheet.create({
         marginLeft: 5,
     },
     friends: {
+        minHeight: 130,
         padding: 10,
     },
     friendDivider: {

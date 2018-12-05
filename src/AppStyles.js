@@ -9,7 +9,8 @@ const _colorSet = {
   mainTextColor: '#000000',
   mainSubtextColor: '#7e7e7e',
   hairlineColor: '#d6d6d6',
-  onlineMarkColor: '#41C61B'
+  onlineMarkColor: '#41C61B',
+  inputBgColor: 'rgba(0.9, 0.9, 0.9, 0.1)',
 };
 
 const _fontSet = {
@@ -70,7 +71,7 @@ const _styleSet = {
       flex: 1
     },
     input: { 
-      backgroundColor: 'rgba(0.9, 0.9, 0.9, 0.1)', 
+      backgroundColor: _colorSet.inputBgColor, 
       borderRadius: 10, 
       color: 'black' 
     }
