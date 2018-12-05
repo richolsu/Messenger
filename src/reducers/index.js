@@ -4,7 +4,7 @@ import { RootNavigator } from '../navigations/AppNavigation';
 // import firebase from 'react-native-firebase';
 
 // Start with two routes: The Main screen, with the Login screen on top.
-const firstAction = RootNavigator.router.getActionForPathAndParams('DrawerStack');
+const firstAction = RootNavigator.router.getActionForPathAndParams('LoginStack');
 const initialNavState = RootNavigator.router.getStateForAction(
   firstAction
 );

@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
 import Button from 'react-native-button';
 import AppStyles from '../AppStyles';
-// import firebase from 'react-native-firebase';
+import firebase from 'react-native-firebase';
 
 class LoginScreen extends React.Component {
     constructor(props) {
@@ -17,28 +17,23 @@ class LoginScreen extends React.Component {
     onPressLogin = () => {
         const { email, password } = this.state;
         this.props.navigation.dispatch({ type: 'Login', user: {} });
-        // firebase.auth().signInWithEmailAndPassword(email, password)
-        //     .then((response) => {
-        //         const { navigation } = this.props;
-        //         user_uid = response.user._user.uid;
-        //         firebase.firestore().collection('Users').doc(user_uid).get().then(function (user) {
-        //             if (user.exists) {
-        //                 navigation.dispatch({ type: 'Login', user: user });
-        //             } else {
-        //                 alert("user does not exist!");
-        //             }
-        //         }).catch(function (error) {
-        //             const { code, message } = error;
-        //             alert(message);
-        //         });
-        //     })
-        //     .catch((error) => {
-        //         const { code, message } = error;
-        //         alert(message);
-        //         // For details of error codes, see the docs
-        //         // The message contains the default Firebase string
-        //         // representation of the error
-        //     });
+        firebase.auth().signInWithEmailAndPassword(email, password).then((response) => {
+            const { navigation } = this.props;
+            user_uid = response.user._user.uid;
+            firebase.firestore().collection('Users').doc(user_uid).get().then(function (user) {
+                if (user.exists) {
+                    navigation.dispatch({ type: 'Login', user: user });
+                } else {
+                    alert("user does not exist!");
+                }
+            }).catch(function (error) {
+                const { code, message } = error;
+                alert(message);
+            });
+        }).catch((error) => {
+            const { code, message } = error;
+            alert(message);
+        });
     }
 
     render() {
