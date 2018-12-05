@@ -17,8 +17,8 @@ class HomeScreen extends React.Component {
                 <Image style={AppStyles.styleSet.menuBtn.icon} source={AppStyles.iconSet.menu} />
             </TouchableOpacity>,
         headerRight:
-            <TouchableOpacity style={styles.rightBtncontainer} onPress={() => navigation.state.params.onCreate()}>
-                <Image style={styles.rightBtnIcon} source={AppStyles.iconSet.inscription} />
+            <TouchableOpacity style={AppStyles.styleSet.menuBtn.container} onPress={() => navigation.state.params.onCreate()}>
+                <Image style={AppStyles.styleSet.menuBtn.icon} source={AppStyles.iconSet.inscription} />
             </TouchableOpacity>
     });
 
