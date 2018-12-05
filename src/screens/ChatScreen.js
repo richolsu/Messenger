@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import AppStyles from '../AppStyles';
 import apiData from '../dummy_data.json';
 import ActionSheet from 'react-native-actionsheet'
+import DialogInput from 'react-native-dialog-input';
 
 const MY_ID = '33';
 
@@ -23,6 +24,7 @@ class ChatScreen extends React.Component {
         const chat = navigation.getParam('chat');
 
         this.state = {
+            isRenameDialogVisible: false,
             chat: chat,
             threads: apiData.threads,
             input: null,
@@ -37,7 +39,7 @@ class ChatScreen extends React.Component {
 
     onSettingActionDone = (index) => {
         if (index == 0) {
-            alert("Open Rename ");
+            this.showRenameDialog(true);
         } else if (index == 1) {
             this.onLeave();
         }
@@ -45,7 +47,7 @@ class ChatScreen extends React.Component {
 
     onConfirmActionDone = (index) => {
         if (index == 0) {
-            alert("Leaved");
+            alert('Leaved');
         }
     }
 
@@ -59,6 +61,29 @@ class ChatScreen extends React.Component {
 
     onPressChat = (chat) => {
 
+    }
+
+
+    onSend = () => {
+
+    }
+
+    onSelect = () => {
+
+    }
+
+    showRenameDialog = (show) => {
+        this.setState({ isRenameDialogVisible: show });
+    }
+
+    onChangeName = (text) => {
+        const newChat = this.state.chat;
+        newChat.name = text;
+        this.setState({ chat: newChat });
+        this.props.navigation.setParams({
+            chat: newChat
+        });
+        this.showRenameDialog(false);
     }
 
     renderChatItem = ({ item }) => (
@@ -83,13 +108,6 @@ class ChatScreen extends React.Component {
     );
 
 
-    onSend = () => {
-
-    }
-
-    onSelect = () => {
-
-    }
 
     render() {
         return (
@@ -110,7 +128,7 @@ class ChatScreen extends React.Component {
                     <TextInput
                         style={styles.input}
                         onChangeText={(text) => this.setState({ input: text })}
-                        placeholder="Start typing..."
+                        placeholder='Start typing...'
                         underlineColorAndroid='transparent' />
                     <TouchableOpacity disabled={true} style={styles.btnContainer} onPress={this.onSend}>
                         <Image style={styles.icon} source={AppStyles.iconSet.share} />
@@ -132,6 +150,14 @@ class ChatScreen extends React.Component {
                     destructiveButtonIndex={0}
                     onPress={(index) => { this.onConfirmActionDone(index) }}
                 />
+                <DialogInput isDialogVisible={this.state.isRenameDialogVisible}
+                    title={'Change Name'}
+                    hintInput={this.state.chat.name}
+                    textInputProps={{ selectTextOnFocus: true }}
+                    submitText={'OK'}
+                    submitInput={(inputText) => { this.onChangeName(inputText) }}
+                    closeDialog={() => { this.showRenameDialog(false) }}>
+                </DialogInput>
             </View>
         );
     }
