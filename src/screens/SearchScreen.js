@@ -7,6 +7,10 @@ import { connect } from 'react-redux';
 import TextButton from 'react-native-button';
 import firebase from 'react-native-firebase';
 
+const REQUEST_NONE = 0;
+const REQUEST_TO_HIM = 1;
+const REQUEST_TO_ME = 2;
+
 class SearchScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
         const { params = {} } = navigation.state;
@@ -31,11 +35,25 @@ class SearchScreen extends React.Component {
     constructor(props) {
         super(props);
 
-        this.ref = firebase.firestore().collection('users');
-        this.unsubscribe = null;
+        this.usersRef = firebase.firestore().collection('users');
+        this.usersUnsubscribe = null;
+
+        this.heAcceptedFriendshipsRef = firebase.firestore().collection('friendships').where('user1', '==', this.props.user.id);
+        this.heAcceptedFriendshipssUnsubscribe = null;
+
+        this.iAcceptedFriendshipsRef = firebase.firestore().collection('friendships').where('user2', '==', this.props.user.id);
+        this.iAcceptedFriendshipssUnsubscribe = null;
+
+        this.toMePendingFriendshipsRef = firebase.firestore().collection('pending_friendships').where('user2', '==', this.props.user.id);
+        this.toMePendingFriendshipssUnsubscribe = null;
+
+        this.toHimPendingFriendshipsRef = firebase.firestore().collection('pending_friendships').where('user1', '==', this.props.user.id);
+        this.toHimPendingFriendshipssUnsubscribe = null;
 
         this.state = {
+            friends: [],
             keyword: null,
+            pendingFriends: [],
             users: [],
             filteredUsers: []
         };
@@ -43,22 +61,98 @@ class SearchScreen extends React.Component {
 
 
     componentDidMount() {
-        this.unsubscribe = this.ref.onSnapshot(this.onCollectionUpdate)
+        this.usersUnsubscribe = this.usersRef.onSnapshot(this.onUsersCollectionUpdate);
+        this.toMePendingFriendshipssUnsubscribe = this.toMePendingFriendshipsRef.onSnapshot(this.onPendingFriendShipsCollectionUpdate);
+        this.toHimPendingFriendshipssUnsubscribe = this.toHimPendingFriendshipsRef.onSnapshot(this.onPendingFriendShipsCollectionUpdate);
+        this.heAcceptedFriendshipssUnsubscribe = this.heAcceptedFriendshipsRef.onSnapshot(this.onFriendShipsCollectionUpdate);
+        this.iAcceptedFriendshipssUnsubscribe = this.iAcceptedFriendshipsRef.onSnapshot(this.onFriendShipsCollectionUpdate);
         this.props.navigation.setParams({
             handleSearch: this.onSearch
         });
     }
 
-    onCollectionUpdate = (querySnapshot) => {
+    componentWillUnmount() {
+        this.usersUnsubscribe();
+        this.toMePendingFriendshipssUnsubscribe();
+        this.toHimPendingFriendshipssUnsubscribe();
+        this.heAcceptedFriendshipssUnsubscribe();
+        this.iAcceptedFriendshipssUnsubscribe();
+    }
+
+    onFriendShipsCollectionUpdate = (querySnapshot) => {
+        const data = [];
+        querySnapshot.forEach((doc) => {
+            const temp = doc.data();
+            temp.id = doc.id;
+            data.push(temp);
+        });
+
+        const newUsers = this.state.users.map(user => {
+            const temp = data.filter(friendship => {
+                return friendship.user1 == user.id || friendship.user2 == user.id;
+            })
+            if (temp.length > 0) {
+                user.isFriend = true;
+            } else {
+                user.isFriend = false;
+            }
+            return user;
+        });
+        this.setState({
+            friends: [...this.state.friends, data],
+            users: newUsers,
+            filteredUsers: newUsers
+        });
+    }
+
+
+
+    onPendingFriendShipsCollectionUpdate = (querySnapshot) => {
+        const data = [];
+        querySnapshot.forEach((doc) => {
+            const temp = doc.data();
+            temp.id = doc.id;
+            data.push(temp);
+        });
+
+        const newUsers = this.state.users.map(user => {
+            const temp = data.filter(pending => {
+                return pending.user1 == user.id || pending.user2 == user.id;
+            })
+            if (temp.length > 0) {
+                user.pendingId = temp[0].id;
+                if (temp[0].user1 == this.props.user.id) {
+                    user.pending = REQUEST_TO_HIM;
+                } else {
+                    user.pending = REQUEST_TO_ME;
+                }
+            } else if (!user.pending) {
+                user.pending = REQUEST_NONE;
+            }
+            return user;
+        });
+
+        this.setState({
+            pendingFriends: [...this.state.pendingFriends, data],
+            users: newUsers,
+            filteredUsers: newUsers
+        });
+    }
+
+
+
+    onUsersCollectionUpdate = (querySnapshot) => {
         const data = [];
         querySnapshot.forEach((doc) => {
             const user = doc.data();
-            data.push({ ...user, id: doc.id });
+            if (doc.id != this.props.user.id) {
+                data.push({ ...user, id: doc.id });
+            }
         });
 
-        this.setState({ 
+        this.setState({
             users: data,
-            filteredUsers: data 
+            filteredUsers: data
         });
     }
 
@@ -73,13 +167,40 @@ class SearchScreen extends React.Component {
     }
 
     onSearch = (text) => {
-        this.setState({keyword: text});
+        this.setState({ keyword: text });
         const filteredUsers = this.filteredUsers(text);
-        this.setState({filteredUsers: filteredUsers});
+        this.setState({ filteredUsers: filteredUsers });
     }
 
     onPress = (item) => {
         this.props.navigation.navigate('Detail', { item: item });
+    }
+
+    onAdd = (item) => {
+        const data = {
+            user1: this.props.user.id,
+            user2: item.id,
+            created_at: firebase.firestore.FieldValue.serverTimestamp(),
+        }
+        firebase.firestore().collection('pending_friendships').add(data).then(function (docRef) {
+            alert('Successfully sent friend request!');
+        }).catch(function (error) {
+            alert(error);
+        });;
+    }
+
+    onAccept = (item) => {
+        const data = {
+            user1: item.id,
+            user2: this.props.user.id,
+        }
+
+        firebase.firestore().collection('pending_friendships').doc(item.pendingId).delete();
+        firebase.firestore().collection('friendships').add(data).then(function (docRef) {
+            alert('Successfully accept friend request!');
+        }).catch(function (error) {
+            alert(error);
+        });
     }
 
     renderItem = ({ item }) => (
@@ -87,8 +208,17 @@ class SearchScreen extends React.Component {
             <View style={styles.container}>
                 <FastImage style={styles.photo} source={{ uri: item.profilePictureURL }} />
                 <Text style={styles.name}>{item.firstName}</Text>
-                <TextButton style={styles.add} onPress={() => this.onAdd(item)} >Add</TextButton>
-                <TextButton style={styles.accept} onPress={() => this.onAccept(item)} >Accept</TextButton>
+
+                {!item.isFriend && item.pending == REQUEST_NONE &&
+                    <TextButton style={[styles.request, styles.add]} onPress={() => this.onAdd(item)} >Add</TextButton>
+                }
+                {!item.isFriend && item.pending == REQUEST_TO_ME &&
+                    <TextButton style={[styles.request, styles.accept]} onPress={() => this.onAccept(item)} >Accept</TextButton>
+                }
+                {!item.isFriend && item.pending == REQUEST_TO_HIM &&
+                    <TextButton style={[styles.request, styles.sent]} disabled={true}>Sent</TextButton>
+                }
+
             </View>
         </TouchableOpacity>
     );
@@ -125,28 +255,24 @@ const styles = StyleSheet.create({
         flex: 1,
         color: AppStyles.colorSet.mainTextColor,
     },
-    add: {
+    request: {
         alignSelf: 'center',
         borderWidth: 0.5,
         borderColor: AppStyles.colorSet.hairlineColor,
-        color: AppStyles.colorSet.mainThemeForegroundColor,
         padding: 5,
         paddingLeft: 20,
         paddingRight: 20,
         borderRadius: 5,
         fontWeight: 'normal',
     },
-    accept: {
-        marginLeft: 10,
-        alignSelf: 'center',
-        borderWidth: 0.5,
-        fontWeight: 'normal',
+    add: {
         color: AppStyles.colorSet.mainThemeForegroundColor,
-        borderColor: AppStyles.colorSet.hairlineColor,
-        padding: 5,
-        paddingLeft: 20,
-        paddingRight: 20,
-        borderRadius: 5,
+    },
+    sent: {
+        color: AppStyles.colorSet.hairlineColor,
+    },
+    accept: {
+        color: AppStyles.colorSet.mainThemeForegroundColor,
     },
     rightBtncontainer: {
         backgroundColor: AppStyles.colorSet.hairlineColor,

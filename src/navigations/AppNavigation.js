@@ -32,7 +32,7 @@ const LoginStack = createStackNavigator({
     Signup: { screen: SignupScreen },
     Welcome: { screen: WelcomeScreen }
 }, {
-        initialRouteName: 'Welcome',
+        initialRouteName: 'Login',
         headerMode: 'float',
         navigationOptions: ({ navigation }) => ({
             headerTintColor: AppStyles.colorSet.mainThemeForegroundColor,
@@ -95,7 +95,7 @@ const DrawerStack = DrawerNavigator({
     SearchStack: SearchStack,
 }, {
         drawerPosition: 'left',
-        initialRouteName: 'HomeStack',
+        initialRouteName: 'SearchStack',
         drawerWidth: 200,
         contentComponent: DrawerContainer
     })
