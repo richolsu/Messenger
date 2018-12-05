@@ -2,10 +2,10 @@ import React from 'react';
 import { FlatList, TouchableOpacity, Image, StyleSheet, Text, View } from 'react-native';
 import { SearchBar } from "react-native-elements";
 import AppStyles from '../AppStyles';
-import apiData from '../dummy_data.json';
 import FastImage from 'react-native-fast-image';
 import { connect } from 'react-redux';
 import TextButton from 'react-native-button';
+import firebase from 'react-native-firebase';
 
 class SearchScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
@@ -31,18 +31,51 @@ class SearchScreen extends React.Component {
     constructor(props) {
         super(props);
 
+        this.ref = firebase.firestore().collection('users');
+        this.unsubscribe = null;
+
         this.state = {
-            users: apiData.friends
+            keyword: null,
+            users: [],
+            filteredUsers: []
         };
     }
-    onSearch = (text) => {
 
-    }
 
     componentDidMount() {
+        this.unsubscribe = this.ref.onSnapshot(this.onCollectionUpdate)
         this.props.navigation.setParams({
             handleSearch: this.onSearch
         });
+    }
+
+    onCollectionUpdate = (querySnapshot) => {
+        const data = [];
+        querySnapshot.forEach((doc) => {
+            const user = doc.data();
+            data.push({ ...user, id: doc.id });
+        });
+
+        this.setState({ 
+            users: data,
+            filteredUsers: data 
+        });
+    }
+
+    filteredUsers = (keyword) => {
+        if (keyword) {
+            return this.state.users.filter(user => {
+                return user.firstName.indexOf(keyword) >= 0;
+            });
+        } else {
+            return this.state.users;
+        }
+    }
+
+    onSearch = (text) => {
+        this.setState({keyword: text});
+        const filteredUsers = this.filteredUsers(text);
+        this.setState({filteredUsers: filteredUsers});
     }
 
     onPress = (item) => {
@@ -64,7 +97,7 @@ class SearchScreen extends React.Component {
     render() {
         return (
             <FlatList
-                data={this.state.users}
+                data={this.state.filteredUsers}
                 renderItem={this.renderItem}
                 keyExtractor={item => `${item.id}`}
                 initialNumToRender={5}
