@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
 import Button from 'react-native-button';
 import AppStyles from '../AppStyles';
-// import firebase from 'react-native-firebase';
+import firebase from 'react-native-firebase';
 
 class SignupScreen extends React.Component {
 
@@ -19,42 +19,44 @@ class SignupScreen extends React.Component {
     }
 
     componentDidMount() {
-        // this.authSubscription = firebase.auth().onAuthStateChanged((user) => {
-        //     this.setState({
-        //         loading: false,
-        //         user,
-        //     });
-        // });
+        this.authSubscription = firebase.auth().onAuthStateChanged((user) => {
+            this.setState({
+                loading: false,
+                user,
+            });
+        });
     }
 
     componentWillUnmount() {
-        // this.authSubscription();
+        this.authSubscription();
     }
 
     onRegister = () => {
         const { email, password } = this.state;
-        // firebase.auth().createUserWithEmailAndPassword(email, password)
-        //     .then((response) => {
-        //         const { navigation } = this.props;
-        //         const { fullname, phone, email } = this.state;
-        //         const data = {
-        //             email: email,
-        //             fullname: fullname,
-        //             phone: phone,
-        //         };
-        //         user_uid = response.user._user.uid;
-        //         firebase.firestore().collection('Users').doc(user_uid).set(data);
-        //         firebase.firestore().collection('Users').doc(user_uid).get().then(function (user) {
-        //             navigation.dispatch({ type: 'Login', user: user });
-        //         }).catch(function (error) {
-        //             const { code, message } = error;
-        //             alert(message);
-        //         });
+        firebase.auth().createUserWithEmailAndPassword(email, password).then((response) => {
+            const { navigation } = this.props;
+            user_uid = response.user._user.uid;
 
-        //     }).catch((error) => {
-        //         const { code, message } = error;
-        //         alert(message);
-        //     });
+            const { fullname, phone, email } = this.state;
+            const data = {
+                email: email,
+                firstName: fullname,
+                phone: phone,
+                userID: user_uid,
+                profilePictureURL: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTApP6ui5ufiKpyt_K3PjZi0FG7x_GWMK_f6NgoL0EsnWvg0WHa4w',
+            };
+            firebase.firestore().collection('users').doc(user_uid).set(data);
+            firebase.firestore().collection('users').doc(user_uid).get().then(function (user) {
+                navigation.dispatch({ type: 'Login', user: user });
+            }).catch(function (error) {
+                const { code, message } = error;
+                alert(message);
+            });
+
+        }).catch((error) => {
+            const { code, message } = error;
+            alert(message);
+        });
     }
 
     render() {
