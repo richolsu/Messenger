@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import AppStyles from '../AppStyles';
 import apiData from '../dummy_data.json';
 import ChatIconView from '../components/ChatIconView';
+import firebase from 'react-native-firebase';
 
 class HomeScreen extends React.Component {
     static navigationOptions = ({ navigation }) => ({
@@ -23,15 +24,100 @@ class HomeScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            friends: apiData.friends,
+            heAcceptedFriendships: [],
+            hiAcceptedFriendships: [],
+            friends: [],
             chats: apiData.chats,
         }
+
+        this.heAcceptedFriendshipsRef = firebase.firestore().collection('friendships').where('user1', '==', this.props.user.id);
+        this.heAcceptedFriendshipssUnsubscribe = null;
+
+        this.iAcceptedFriendshipsRef = firebase.firestore().collection('friendships').where('user2', '==', this.props.user.id);
+        this.iAcceptedFriendshipssUnsubscribe = null;
+
     }
 
     componentDidMount() {
+
+        this.heAcceptedFriendshipssUnsubscribe = this.heAcceptedFriendshipsRef.onSnapshot(this.onHeAcceptedFriendShipsCollectionUpdate);
+        this.iAcceptedFriendshipssUnsubscribe = this.iAcceptedFriendshipsRef.onSnapshot(this.onIAcceptedFriendShipsCollectionUpdate);
+
         this.props.navigation.setParams({
             onCreate: this.onCreate
         });
+    }
+
+    componentWillUnmount() {
+        this.usersUnsubscribe();
+        this.heAcceptedFriendshipssUnsubscribe();
+        this.iAcceptedFriendshipssUnsubscribe();
+    }
+
+    onUsersCollectionUpdate = (querySnapshot) => {
+        const data = [];
+        querySnapshot.forEach((doc) => {
+            const user = doc.data();
+            user.id = doc.id;
+
+            const friendships_1 = this.state.heAcceptedFriendships.filter(friend => {
+                return friend.user2 == user.id;
+            });
+
+            const friendships_2 = this.state.iAcceptedFriendships.filter(friend => {
+                return friend.user1 == user.id;
+            });
+
+            if (friendships_1.length > 0) {
+                user.friendshipId = friendships_1[0].id;
+                data.push(user);
+            } else if (friendships_2.length > 0) {
+                user.friendshipId = friendships_2[0].id;
+                data.push(user);
+            }
+        });
+
+        this.setState({
+            friends: data,
+        });
+    }
+
+    onHeAcceptedFriendShipsCollectionUpdate = (querySnapshot) => {
+        const data = [];
+        querySnapshot.forEach((doc) => {
+            const temp = doc.data();
+            temp.id = doc.id;
+            data.push(temp);
+        });
+
+        this.setState({
+            heAcceptedFriendships: data,
+        });
+
+        if (this.usersUnsubscribe)
+            this.usersUnsubscribe();
+
+        this.usersRef = firebase.firestore().collection('users');
+        this.usersUnsubscribe = this.usersRef.onSnapshot(this.onUsersCollectionUpdate);
+    }
+
+    onIAcceptedFriendShipsCollectionUpdate = (querySnapshot) => {
+        const data = [];
+        querySnapshot.forEach((doc) => {
+            const temp = doc.data();
+            temp.id = doc.id;
+            data.push(temp);
+        });
+
+        this.setState({
+            iAcceptedFriendships: data,
+        });
+
+        if (this.usersUnsubscribe)
+            this.usersUnsubscribe();
+
+        this.usersRef = firebase.firestore().collection('users');
+        this.usersUnsubscribe = this.usersRef.onSnapshot(this.onUsersCollectionUpdate);
     }
 
     onCreate = () => {

@@ -95,7 +95,7 @@ const DrawerStack = DrawerNavigator({
     SearchStack: SearchStack,
 }, {
         drawerPosition: 'left',
-        initialRouteName: 'FriendsStack',
+        initialRouteName: 'HomeStack',
         drawerWidth: 200,
         contentComponent: DrawerContainer
     })
