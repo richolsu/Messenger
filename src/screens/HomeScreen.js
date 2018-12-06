@@ -139,7 +139,9 @@ class HomeScreen extends React.Component {
             const user = doc.data();
             user.id = doc.id;
 
-            data.push(user);
+            if (user.id != this.props.user.id) {
+                data.push(user);
+            }
         });
 
         this.setState({
@@ -225,8 +227,8 @@ class HomeScreen extends React.Component {
                 <View style={styles.chatItemContent}>
                     <Text style={styles.chatFriendName}>{item.name}</Text>
                     <View style={styles.content}>
-                        <Text style={styles.message}>{item.lastMessage}</Text>
-                        <Text style={styles.time}> • {AppStyles.utils.timeFormat(item.lastMessageDate)}</Text>
+                        <Text numberOfLines={1} style={styles.message}>{item.lastMessage}</Text>
+                        <Text numberOfLines={1} style={styles.time}> • {AppStyles.utils.timeFormat(item.lastMessageDate)}</Text>
                     </View>
                 </View>
             </View>
@@ -339,6 +341,7 @@ const styles = StyleSheet.create({
         width: 90,
     },
     chatItemContent: {
+        flex: 1,
         alignSelf: 'center',
         marginLeft: 10,
     },
@@ -350,6 +353,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
     },
     message: {
+        flex: 2,
         color: AppStyles.colorSet.mainSubtextColor
     },
     time: {

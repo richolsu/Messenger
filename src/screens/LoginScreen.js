@@ -16,13 +16,13 @@ class LoginScreen extends React.Component {
 
     onPressLogin = () => {
         const { email, password } = this.state;
-        
+
         firebase.auth().signInWithEmailAndPassword(email, password).then((response) => {
             const { navigation } = this.props;
             user_uid = response.user._user.uid;
             firebase.firestore().collection('users').doc(user_uid).get().then(function (user) {
                 if (user.exists) {
-                    navigation.dispatch({ type: 'Login', user: user });
+                    navigation.dispatch({ type: 'Login', user: { ...user.data(), id: user.id } });
                 } else {
                     alert("user does not exist!");
                 }

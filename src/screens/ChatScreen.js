@@ -27,7 +27,7 @@ class ChatScreen extends React.Component {
             input: null,
         }
 
-        this.threadsRef = firebase.firestore().collection('channels').doc(channel.id).collection('threads').orderBy('created', 'asc');
+        this.threadsRef = firebase.firestore().collection('channels').doc(channel.id).collection('threads').orderBy('created', 'desc');
         this.threadsUnscribe = null;
     }
 
@@ -49,10 +49,10 @@ class ChatScreen extends React.Component {
             const message = doc.data();
             message.id = doc.id;
             data.push(message);
-            
+
         });
 
-        this.setState({threads: data});
+        this.setState({ threads: data });
     }
 
     onSettingActionDone = (index) => {
@@ -83,7 +83,39 @@ class ChatScreen extends React.Component {
 
 
     onSend = () => {
+        const { id, firstName, profilePictureURL } = this.props.user;
 
+        this.state.channel.participants.forEach(friend => {
+            const data = {
+                content: this.state.input,
+                created: firebase.firestore.FieldValue.serverTimestamp(),
+                recipientFirstName: friend.firstName,
+                recipientID: friend.id,
+                recipientLastName: '',
+                recipientProfilePictureURL: friend.profilePictureURL,
+                senderFirstName: firstName,
+                senderID: id,
+                senderLastName: '',
+                senderProfilePictureURL: profilePictureURL,
+                url: '',
+            }
+
+            firebase.firestore().collection('channels').doc(this.state.channel.id).collection('threads').add(data).then(function (docRef) {
+                // alert('Successfully sent friend request!');
+            }).catch(function (error) {
+                alert(error);
+            });
+        });
+
+        const channel = { ...this.state.channel };
+
+        delete channel.participants;
+        channel.lastMessage = this.state.input;
+        channel.lastMessageDate = firebase.firestore.FieldValue.serverTimestamp();
+
+        firebase.firestore().collection('channels').doc(this.state.channel.id).set(channel);
+
+        this.setState({input: null});
     }
 
     onSelect = () => {
@@ -132,6 +164,7 @@ class ChatScreen extends React.Component {
             <View style={styles.container}>
                 <View style={styles.chats}>
                     <FlatList
+                        inverted
                         vertical
                         showsVerticalScrollIndicator={false}
                         data={this.state.threads}
@@ -148,7 +181,7 @@ class ChatScreen extends React.Component {
                         onChangeText={(text) => this.setState({ input: text })}
                         placeholder='Start typing...'
                         underlineColorAndroid='transparent' />
-                    <TouchableOpacity disabled={true} style={styles.btnContainer} onPress={this.onSend}>
+                    <TouchableOpacity disabled={!this.state.input} style={styles.btnContainer} onPress={this.onSend}>
                         <Image style={styles.icon} source={AppStyles.iconSet.share} />
                     </TouchableOpacity>
                 </View>
