@@ -175,7 +175,6 @@ class HomeScreen extends React.Component {
                         });
                         Promise.all(userPromiseArray).then(values => {
                             data.push(channel);
-                            console.log("==========userPromiseArray all resolved ===========>");
                             channelResolve();
                         });
                     });
@@ -186,8 +185,6 @@ class HomeScreen extends React.Component {
         });
 
         Promise.all(channelPromiseArray).then(values => {
-            console.log("==channelPromiseArray===");
-            console.log(data);
             this.setState({
                 channels: data,
             });
@@ -218,7 +215,7 @@ class HomeScreen extends React.Component {
     };
 
     onPressChat = (chat) => {
-        this.props.navigation.navigate('Chat', { chat: chat });
+        this.props.navigation.navigate('Chat', { channel: chat });
     }
 
     renderChatItem = ({ item }) => (

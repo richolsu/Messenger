@@ -4,15 +4,13 @@ import TextButton from 'react-native-button';
 import FastImage from 'react-native-fast-image';
 import { connect } from 'react-redux';
 import AppStyles from '../AppStyles';
-import apiData from '../dummy_data.json';
 import ActionSheet from 'react-native-actionsheet'
 import DialogInput from 'react-native-dialog-input';
-
-const MY_ID = '33';
+import firebase from 'react-native-firebase';
 
 class ChatScreen extends React.Component {
     static navigationOptions = ({ navigation }) => ({
-        title: navigation.state.params.chat.name,
+        title: navigation.state.params.channel.name,
         headerRight:
             <TextButton style={AppStyles.styleSet.rightNavButton} onPress={() => navigation.state.params.onSetting()} >Setting</TextButton>
     });
@@ -20,21 +18,41 @@ class ChatScreen extends React.Component {
     constructor(props) {
         super(props);
 
-        const { navigation } = props;
-        const chat = navigation.getParam('chat');
+        const channel = props.navigation.getParam('channel');
 
         this.state = {
             isRenameDialogVisible: false,
-            chat: chat,
-            threads: apiData.threads,
+            channel: channel,
+            threads: [],
             input: null,
         }
+
+        this.threadsRef = firebase.firestore().collection('channels').doc(channel.id).collection('threads').orderBy('created', 'asc');
+        this.threadsUnscribe = null;
     }
 
     componentDidMount() {
+        this.threadsUnscribe = this.threadsRef.onSnapshot(this.onThreadsCollectionUpdate);
         this.props.navigation.setParams({
             onSetting: this.onSetting
         });
+    }
+
+    componentWillUnmount() {
+        this.threadsUnscribe();
+    }
+
+
+    onThreadsCollectionUpdate = (querySnapshot) => {
+        const data = [];
+        querySnapshot.forEach((doc) => {
+            const message = doc.data();
+            message.id = doc.id;
+            data.push(message);
+            
+        });
+
+        this.setState({threads: data});
     }
 
     onSettingActionDone = (index) => {
@@ -77,18 +95,18 @@ class ChatScreen extends React.Component {
     }
 
     onChangeName = (text) => {
-        const newChat = this.state.chat;
-        newChat.name = text;
-        this.setState({ chat: newChat });
+        const newChannel = this.state.channel;
+        newChannel.name = text;
+        this.setState({ channel: newChannel });
         this.props.navigation.setParams({
-            chat: newChat
+            channel: newChannel
         });
         this.showRenameDialog(false);
     }
 
     renderChatItem = ({ item }) => (
         <TouchableOpacity onPress={() => this.onPressChat(item)}>
-            {item.senderID == MY_ID &&
+            {item.senderID == this.props.user.id &&
                 <View style={styles.sendItemContainer}>
                     <View style={[styles.itemContent, styles.sendItemContent]}>
                         <Text style={styles.sendTextMessage}>{item.content}</Text>
@@ -96,7 +114,7 @@ class ChatScreen extends React.Component {
                     <FastImage style={styles.userIcon} source={{ uri: item.senderProfilePictureURL }} />
                 </View>
             }
-            {item.senderID != MY_ID &&
+            {item.senderID != this.props.user.id &&
                 <View style={styles.receiveItemContainer}>
                     <FastImage style={styles.userIcon} source={{ uri: item.senderProfilePictureURL }} />
                     <View style={[styles.itemContent, styles.receiveItemContent]}>
@@ -152,7 +170,7 @@ class ChatScreen extends React.Component {
                 />
                 <DialogInput isDialogVisible={this.state.isRenameDialogVisible}
                     title={'Change Name'}
-                    hintInput={this.state.chat.name}
+                    hintInput={this.state.channel.name}
                     textInputProps={{ selectTextOnFocus: true }}
                     submitText={'OK'}
                     submitInput={(inputText) => { this.onChangeName(inputText) }}
