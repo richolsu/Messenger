@@ -178,6 +178,7 @@ class ChatScreen extends React.Component {
                     </TouchableOpacity>
                     <TextInput
                         style={styles.input}
+                        value={this.state.input}
                         onChangeText={(text) => this.setState({ input: text })}
                         placeholder='Start typing...'
                         underlineColorAndroid='transparent' />
