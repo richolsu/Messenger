@@ -144,7 +144,12 @@ class HomeScreen extends React.Component {
             }
         });
 
+        const channels = this.state.channels.filter(channel => {
+            return data.filter(participation => channel.id == participation.channel).length > 0
+        });
+        
         this.setState({
+            channels: channels,
             channelParticipations: data,
         });
     }
@@ -169,6 +174,7 @@ class HomeScreen extends React.Component {
                                 firebase.firestore().collection('users').doc(participation.user).get().then((user) => {
                                     const userData = user.data();
                                     userData.id = user.id;
+                                    userData.participationId = participation.id;
                                     channel.participants = [...channel.participants, userData];
                                     userResolve();
                                 });

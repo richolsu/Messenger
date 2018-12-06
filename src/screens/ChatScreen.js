@@ -65,7 +65,16 @@ class ChatScreen extends React.Component {
 
     onConfirmActionDone = (index) => {
         if (index == 0) {
-            alert('Leaved');
+            firebase.firestore().collection('channel_participation')
+                .where('channel', '==', this.state.channel.id)
+                .where('user', '==', this.props.user.id)
+                .get().then(querySnapshot => {
+                    querySnapshot.forEach(function (doc) {
+                        console.log(doc.data());
+                        doc.ref.delete();
+                    });
+                    this.props.navigation.goBack(null);
+                });
         }
     }
 
@@ -115,7 +124,7 @@ class ChatScreen extends React.Component {
 
         firebase.firestore().collection('channels').doc(this.state.channel.id).set(channel);
 
-        this.setState({input: null});
+        this.setState({ input: null });
     }
 
     onSelect = () => {
@@ -127,13 +136,21 @@ class ChatScreen extends React.Component {
     }
 
     onChangeName = (text) => {
-        const newChannel = this.state.channel;
-        newChannel.name = text;
-        this.setState({ channel: newChannel });
-        this.props.navigation.setParams({
-            channel: newChannel
-        });
+
         this.showRenameDialog(false);
+
+        const channel = { ...this.state.channel };
+        delete channel.participants;
+        channel.name = text;
+
+        firebase.firestore().collection('channels').doc(this.state.channel.id).set(channel).then(() => {
+            const newChannel = this.state.channel;
+            newChannel.name = text;
+            this.setState({ channel: newChannel });
+            this.props.navigation.setParams({
+                channel: newChannel
+            });
+        });
     }
 
     renderChatItem = ({ item }) => (
