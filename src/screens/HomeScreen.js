@@ -42,7 +42,7 @@ class HomeScreen extends React.Component {
         this.channelPaticipationRef = firebase.firestore().collection('channel_participation').where('user', '==', this.props.user.id);
         this.channelPaticipationUnsubscribe = null;
 
-        this.channelsRef = firebase.firestore().collection('channels');
+        this.channelsRef = firebase.firestore().collection('channels').orderBy('lastMessageDate', 'desc');
         this.channelsUnsubscribe = null;
 
     }
@@ -52,7 +52,6 @@ class HomeScreen extends React.Component {
         this.heAcceptedFriendshipsUnsubscribe = this.heAcceptedFriendshipsRef.onSnapshot(this.onHeAcceptedFriendShipsCollectionUpdate);
         this.iAcceptedFriendshipsUnsubscribe = this.iAcceptedFriendshipsRef.onSnapshot(this.onIAcceptedFriendShipsCollectionUpdate);
         this.channelPaticipationUnsubscribe = this.channelPaticipationRef.onSnapshot(this.onChannelParticipationCollectionUpdate);
-        this.channelsUnsubscribe = this.channelsRef.onSnapshot(this.onChannelCollectionUpdate);
 
         this.props.navigation.setParams({
             onCreate: this.onCreate
@@ -149,11 +148,13 @@ class HomeScreen extends React.Component {
         });
         
         this.setState({
-            channels: channels,
+            // channels: channels,
             channelParticipations: data,
         });
-    }
 
+        this.channelsUnsubscribe = this.channelsRef.onSnapshot(this.onChannelCollectionUpdate);
+
+    }
 
     onChannelCollectionUpdate = (querySnapshot) => {
         const data = [];
@@ -315,7 +316,7 @@ const styles = StyleSheet.create({
         marginLeft: 5,
     },
     friends: {
-        minHeight: 130,
+        minHeight: 75,
         padding: 10,
     },
     friendDivider: {
@@ -326,9 +327,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     friendPhoto: {
-        height: 80,
-        borderRadius: 40,
-        width: 80,
+        height: 60,
+        borderRadius: 30,
+        width: 60,
     },
     friendName: {
         marginTop: 10,
@@ -342,9 +343,9 @@ const styles = StyleSheet.create({
         marginTop: 20,
     },
     chatItemIcon: {
-        height: 90,
+        height: 70,
         // borderRadius: 45,
-        width: 90,
+        width: 70,
     },
     chatItemContent: {
         flex: 1,

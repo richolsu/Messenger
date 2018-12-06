@@ -146,6 +146,8 @@ class CreateGroupScreen extends React.Component {
         const channelData = {
             creator_id: this.props.user.id,
             name: text,
+            lastMessage: 'Created Group',
+            lastMessageDate: firebase.firestore.FieldValue.serverTimestamp()
         };
 
         const {friends} = this.state;
@@ -166,9 +168,9 @@ class CreateGroupScreen extends React.Component {
                 }
                 firebase.firestore().collection('channel_participation').add(participationData);
             });
-            alert('Successfully created group!');
+            
             that.showNameDialog(false);
-            that.props.navigation.navigate('Home');
+            that.props.navigation.goBack(null);
         }).catch(function (error) {
             alert(error);
         });
