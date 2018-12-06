@@ -29,20 +29,30 @@ class HomeScreen extends React.Component {
             hiAcceptedFriendships: [],
             friends: [],
             chats: apiData.chats,
+            channelParticipations: [],
+            channels: [],
         }
 
         this.heAcceptedFriendshipsRef = firebase.firestore().collection('friendships').where('user1', '==', this.props.user.id);
-        this.heAcceptedFriendshipssUnsubscribe = null;
+        this.heAcceptedFriendshipsUnsubscribe = null;
 
         this.iAcceptedFriendshipsRef = firebase.firestore().collection('friendships').where('user2', '==', this.props.user.id);
-        this.iAcceptedFriendshipssUnsubscribe = null;
+        this.iAcceptedFriendshipsUnsubscribe = null;
+
+        this.channelPaticipationRef = firebase.firestore().collection('channel_participation').where('user', '==', this.props.user.id);
+        this.channelPaticipationUnsubscribe = null;
+
+        this.channelsRef = firebase.firestore().collection('channels');
+        this.channelsUnsubscribe = null;
 
     }
 
     componentDidMount() {
 
-        this.heAcceptedFriendshipssUnsubscribe = this.heAcceptedFriendshipsRef.onSnapshot(this.onHeAcceptedFriendShipsCollectionUpdate);
-        this.iAcceptedFriendshipssUnsubscribe = this.iAcceptedFriendshipsRef.onSnapshot(this.onIAcceptedFriendShipsCollectionUpdate);
+        this.heAcceptedFriendshipsUnsubscribe = this.heAcceptedFriendshipsRef.onSnapshot(this.onHeAcceptedFriendShipsCollectionUpdate);
+        this.iAcceptedFriendshipsUnsubscribe = this.iAcceptedFriendshipsRef.onSnapshot(this.onIAcceptedFriendShipsCollectionUpdate);
+        this.channelPaticipationUnsubscribe = this.channelPaticipationRef.onSnapshot(this.onChannelParticipationCollectionUpdate);
+        this.channelsUnsubscribe = this.channelsRef.onSnapshot(this.onChannelCollectionUpdate);
 
         this.props.navigation.setParams({
             onCreate: this.onCreate
@@ -51,8 +61,10 @@ class HomeScreen extends React.Component {
 
     componentWillUnmount() {
         this.usersUnsubscribe();
-        this.heAcceptedFriendshipssUnsubscribe();
-        this.iAcceptedFriendshipssUnsubscribe();
+        this.heAcceptedFriendshipsUnsubscribe();
+        this.iAcceptedFriendshipsUnsubscribe();
+        this.channelPaticipationUnsubscribe();
+        this.channelsUnsubscribe();
     }
 
     onUsersCollectionUpdate = (querySnapshot) => {
@@ -121,6 +133,69 @@ class HomeScreen extends React.Component {
         this.usersUnsubscribe = this.usersRef.onSnapshot(this.onUsersCollectionUpdate);
     }
 
+    onChannelParticipationCollectionUpdate = (querySnapshot) => {
+        const data = [];
+        querySnapshot.forEach((doc) => {
+            const user = doc.data();
+            user.id = doc.id;
+
+            data.push(user);
+        });
+
+        this.setState({
+            channelParticipations: data,
+        });
+    }
+
+
+    onChannelCollectionUpdate = (querySnapshot) => {
+        const data = [];
+        const channelPromiseArray = [];
+        querySnapshot.forEach((doc) => {
+            channelPromiseArray.push(new Promise((channelResolve, channelReject) => {
+                const channel = doc.data();
+                channel.id = doc.id;
+                channel.participants = [];
+                const filters = this.state.channelParticipations.filter(item => item.channel == channel.id);
+                if (filters.length > 0) {
+                    firebase.firestore().collection('channel_participation').where('channel', '==', channel.id).onSnapshot((participationSnapshot) => {
+                        const userPromiseArray = [];
+                        participationSnapshot.forEach((participationDoc) => {
+                            const participation = participationDoc.data();
+                            participation.id = participationDoc.id;
+                            userPromiseArray.push(new Promise((userResolve, userReject) => {
+                                firebase.firestore().collection('users').doc(participation.user).get().then((user) => {
+                                    const userData = user.data();
+                                    userData.id = user.id;
+                                    channel.participants = [...channel.participants, userData];
+                                    userResolve();
+                                });
+                            }));
+
+                        });
+                        Promise.all(userPromiseArray).then(values => {
+                            data.push(channel);
+                            console.log("==========userPromiseArray all resolved ===========>");
+                            channelResolve();
+                        });
+                    });
+                } else {
+                    channelResolve();
+                }
+            }));
+        });
+
+        Promise.all(channelPromiseArray).then(values => {
+            console.log("==channelPromiseArray===");
+            console.log(data);
+            this.setState({
+                channels: data,
+            });
+        });
+
+
+    }
+
     onCreate = () => {
         this.props.navigation.navigate('CreateGroup');
     }
@@ -149,12 +224,12 @@ class HomeScreen extends React.Component {
     renderChatItem = ({ item }) => (
         <TouchableOpacity onPress={() => this.onPressChat(item)}>
             <View style={styles.chatItemContainer}>
-                <ChatIconView style={styles.chatItemIcon} channel_participation={item.channel_participation} />
+                <ChatIconView style={styles.chatItemIcon} participants={item.participants} />
                 <View style={styles.chatItemContent}>
                     <Text style={styles.chatFriendName}>{item.name}</Text>
                     <View style={styles.content}>
-                        <Text style={styles.message}>{item.lastMesssage}</Text>
-                        <Text style={styles.time}> • {item.lastMessageDate}</Text>
+                        <Text style={styles.message}>{item.lastMessage}</Text>
+                        <Text style={styles.time}> • {AppStyles.utils.timeFormat(item.lastMessageDate)}</Text>
                     </View>
                 </View>
             </View>
@@ -194,9 +269,9 @@ class HomeScreen extends React.Component {
                     <FlatList
                         vertical
                         showsVerticalScrollIndicator={false}
-                        data={this.state.chats}
+                        data={this.state.channels}
                         renderItem={this.renderChatItem}
-                        keyExtractor={item => `${item.channelID}`}
+                        keyExtractor={item => `${item.id}`}
                     />
                 </View>
             </ScrollView>

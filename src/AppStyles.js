@@ -1,4 +1,5 @@
 import { Dimensions } from 'react-native';
+import moment from 'moment';
 
 const WINDOW_WIDTH = Dimensions.get('window').width;
 const WINDOW_HEIGHT = Dimensions.get('window').height;
@@ -65,21 +66,32 @@ const _styleSet = {
   },
   searchBar: {
     container: {
-      backgroundColor: 'transparent', 
+      backgroundColor: 'transparent',
       borderBottomColor: 'transparent',
-      borderTopColor: 'transparent', 
+      borderTopColor: 'transparent',
       flex: 1
     },
-    input: { 
-      backgroundColor: _colorSet.inputBgColor, 
-      borderRadius: 10, 
-      color: 'black' 
+    input: {
+      backgroundColor: _colorSet.inputBgColor,
+      borderRadius: 10,
+      color: 'black'
     }
   },
   rightNavButton: {
     marginRight: 10,
   }
 
+}
+
+const _functions = {
+  timeFormat: (timeStamp) => {
+    time = "";
+    if (timeStamp) {
+      time = moment(timeStamp).fromNow();
+    }
+    // time = postTime.toUTCString();
+    return time;
+  }
 }
 
 const StyleDict = {
@@ -90,6 +102,7 @@ const StyleDict = {
   styleSet: _styleSet,
   windowW: WINDOW_WIDTH,
   windowH: WINDOW_HEIGHT,
+  utils: _functions,
 };
 
 export default StyleDict;

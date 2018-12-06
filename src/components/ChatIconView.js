@@ -11,19 +11,24 @@ export default class ChatIconView extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        {this.props.channel_participation.length == 1 &&
+        {this.props.participants.length == 0 &&
           <View style={styles.singleParticipation}>
-            <FastImage style={styles.singleChatItemIcon} source={{ uri: this.props.channel_participation[0].profilePictureURL }} />
-            {this.props.channel_participation[0].online &&
+            <Image style={styles.singleChatItemIcon} source={AppStyles.iconSet.friends} />
+          </View>
+        }
+        {this.props.participants.length == 1 &&
+          <View style={styles.singleParticipation}>
+            <FastImage style={styles.singleChatItemIcon} source={{ uri: this.props.participants[0].profilePictureURL }} />
+            {this.props.participants[0].online &&
               <View style={styles.onlineMark} />
             }
           </View>
         }
-        {this.props.channel_participation.length > 1 &&
+        {this.props.participants.length > 1 &&
           <View style={styles.multiParticipation}>
-            <FastImage style={[styles.multiPaticipationIcon, styles.bottomIcon]} source={{ uri: this.props.channel_participation[0].profilePictureURL }} />
+            <FastImage style={[styles.multiPaticipationIcon, styles.bottomIcon]} source={{ uri: this.props.participants[0].profilePictureURL }} />
             <View style={styles.middleIcon} />
-            <FastImage style={[styles.multiPaticipationIcon, styles.topIcon]} source={{ uri: this.props.channel_participation[1].profilePictureURL }} />
+            <FastImage style={[styles.multiPaticipationIcon, styles.topIcon]} source={{ uri: this.props.participants[1].profilePictureURL }} />
           </View>
         }
       </View>
@@ -51,6 +56,7 @@ const styles = StyleSheet.create({
     width: VIEW_WIDTH,
     left: 0,
     top: 0,
+    tintColor: AppStyles.colorSet.mainThemeForegroundColor,
   },
   onlineMark: {
     position: 'absolute',
