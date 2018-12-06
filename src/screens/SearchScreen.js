@@ -51,6 +51,8 @@ class SearchScreen extends React.Component {
         this.toHimPendingFriendshipssUnsubscribe = null;
 
         this.state = {
+            heAcceptedFriendships: [],
+            hiAcceptedFriendships: [],
             friends: [],
             keyword: null,
             pendingFriends: [],
@@ -64,8 +66,8 @@ class SearchScreen extends React.Component {
         this.usersUnsubscribe = this.usersRef.onSnapshot(this.onUsersCollectionUpdate);
         this.toMePendingFriendshipssUnsubscribe = this.toMePendingFriendshipsRef.onSnapshot(this.onPendingFriendShipsCollectionUpdate);
         this.toHimPendingFriendshipssUnsubscribe = this.toHimPendingFriendshipsRef.onSnapshot(this.onPendingFriendShipsCollectionUpdate);
-        this.heAcceptedFriendshipssUnsubscribe = this.heAcceptedFriendshipsRef.onSnapshot(this.onFriendShipsCollectionUpdate);
-        this.iAcceptedFriendshipssUnsubscribe = this.iAcceptedFriendshipsRef.onSnapshot(this.onFriendShipsCollectionUpdate);
+        this.heAcceptedFriendshipssUnsubscribe = this.heAcceptedFriendshipsRef.onSnapshot(this.onHeAcceptedFriendShipsCollectionUpdate);
+        this.iAcceptedFriendshipssUnsubscribe = this.iAcceptedFriendshipsRef.onSnapshot(this.onIAcceptedFriendShipsCollectionUpdate);
         this.props.navigation.setParams({
             handleSearch: this.onSearch
         });
@@ -79,7 +81,7 @@ class SearchScreen extends React.Component {
         this.iAcceptedFriendshipssUnsubscribe();
     }
 
-    onFriendShipsCollectionUpdate = (querySnapshot) => {
+    onHeAcceptedFriendShipsCollectionUpdate = (querySnapshot) => {
         const data = [];
         querySnapshot.forEach((doc) => {
             const temp = doc.data();
@@ -89,23 +91,43 @@ class SearchScreen extends React.Component {
 
         const newUsers = this.state.users.map(user => {
             const temp = data.filter(friendship => {
-                return friendship.user1 == user.id || friendship.user2 == user.id;
+                return friendship.user2 == user.id;
             })
             if (temp.length > 0) {
                 user.isFriend = true;
-            } else {
-                user.isFriend = false;
             }
             return user;
         });
         this.setState({
-            friends: [...this.state.friends, data],
+            heAcceptedFriendships: data,
             users: newUsers,
             filteredUsers: newUsers
         });
     }
 
+    onIAcceptedFriendShipsCollectionUpdate = (querySnapshot) => {
+        const data = [];
+        querySnapshot.forEach((doc) => {
+            const temp = doc.data();
+            temp.id = doc.id;
+            data.push(temp);
+        });
 
+        const newUsers = this.state.users.map(user => {
+            const temp = data.filter(friendship => {
+                return friendship.user1 == user.id;
+            })
+            if (temp.length > 0) {
+                user.isFriend = true;
+            }
+            return user;
+        });
+        this.setState({
+            iAcceptedFriendships: data,
+            users: newUsers,
+            filteredUsers: newUsers
+        });
+    }
 
     onPendingFriendShipsCollectionUpdate = (querySnapshot) => {
         const data = [];
