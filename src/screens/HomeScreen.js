@@ -171,16 +171,17 @@ class HomeScreen extends React.Component {
                         participationSnapshot.forEach((participationDoc) => {
                             const participation = participationDoc.data();
                             participation.id = participationDoc.id;
-                            userPromiseArray.push(new Promise((userResolve, userReject) => {
-                                firebase.firestore().collection('users').doc(participation.user).get().then((user) => {
-                                    const userData = user.data();
-                                    userData.id = user.id;
-                                    userData.participationId = participation.id;
-                                    channel.participants = [...channel.participants, userData];
-                                    userResolve();
-                                });
-                            }));
-
+                            if (participation.user != this.props.user.id) {
+                                userPromiseArray.push(new Promise((userResolve, userReject) => {
+                                    firebase.firestore().collection('users').doc(participation.user).get().then((user) => {
+                                        const userData = user.data();
+                                        userData.id = user.id;
+                                        userData.participationId = participation.id;
+                                        channel.participants = [...channel.participants, userData];
+                                        userResolve();
+                                    });
+                                }));
+                            }
                         });
                         Promise.all(userPromiseArray).then(values => {
                             data.push(channel);
