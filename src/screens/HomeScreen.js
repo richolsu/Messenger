@@ -52,7 +52,8 @@ class HomeScreen extends React.Component {
         this.heAcceptedFriendshipsUnsubscribe = this.heAcceptedFriendshipsRef.onSnapshot(this.onHeAcceptedFriendShipsCollectionUpdate);
         this.iAcceptedFriendshipsUnsubscribe = this.iAcceptedFriendshipsRef.onSnapshot(this.onIAcceptedFriendShipsCollectionUpdate);
         this.channelPaticipationUnsubscribe = this.channelPaticipationRef.onSnapshot(this.onChannelParticipationCollectionUpdate);
-
+        this.channelsUnsubscribe = this.channelsRef.onSnapshot(this.onChannelCollectionUpdate);
+        
         this.props.navigation.setParams({
             onCreate: this.onCreate
         });
@@ -146,13 +147,13 @@ class HomeScreen extends React.Component {
         const channels = this.state.channels.filter(channel => {
             return data.filter(participation => channel.id == participation.channel).length > 0
         });
-        
+
         this.setState({
-            // channels: channels,
+            channels: channels,
             channelParticipations: data,
         });
 
-        this.channelsUnsubscribe = this.channelsRef.onSnapshot(this.onChannelCollectionUpdate);
+        
 
     }
 
@@ -208,7 +209,14 @@ class HomeScreen extends React.Component {
     }
 
     onPressFriend = (friend) => {
+        console.log(friend);
+        const newChannel = {
+            name: friend.firstName,
+            id: null,
+        };
+        newChannel.participants = [friend];
 
+        this.props.navigation.navigate('Chat', { channel: newChannel });
     }
 
     renderFriendItem = ({ item }) => (

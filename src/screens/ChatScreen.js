@@ -90,8 +90,45 @@ class ChatScreen extends React.Component {
 
     }
 
+    createOne2OneChannel = () => {
+        const channelData = {
+            creator_id: this.props.user.id,
+            name: '',
+            lastMessage: this.state.input,
+            lastMessageDate: firebase.firestore.FieldValue.serverTimestamp()
+        };
+
+        const that = this;
+
+        firebase.firestore().collection('channels').add(channelData).then(function (docRef) { 
+            
+            const newChannel = that.state.channel;
+            newChannel.id = docRef.id;            
+            that.setState({channel: newChannel});
+
+            const participationData = {
+                channel: docRef.id,
+                user: that.props.user.id,
+            }
+            firebase.firestore().collection('channel_participation').add(participationData);
+
+            that.state.channel.participants.forEach(friend => {
+                const participationData = {
+                    channel: docRef.id,
+                    user: friend.id,
+                }
+                firebase.firestore().collection('channel_participation').add(participationData);
+            });            
+        }).catch(function (error) {
+            alert(error);
+        });
+
+    }
 
     onSend = () => {
+        if (!this.state.channel.id) {
+            this.createOne2OneChannel();
+        } 
         const { id, firstName, profilePictureURL } = this.props.user;
 
         this.state.channel.participants.forEach(friend => {
