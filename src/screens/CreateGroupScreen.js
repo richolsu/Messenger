@@ -25,7 +25,7 @@ class CreateGroupScreen extends React.Component {
             hiAcceptedFriendships: [],
             friends: [],
             isNameDialogVisible: false,
-            input: null,
+            input: '',
         };
 
         this.heAcceptedFriendshipsRef = firebase.firestore().collection('friendships').where('user1', '==', this.props.user.id);
