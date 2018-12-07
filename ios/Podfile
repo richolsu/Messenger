@@ -3,14 +3,41 @@
 pod 'Firebase/Core'
 pod 'Firebase/Auth'
 pod 'Firebase/Firestore'
+pod 'Firebase/Storage'
 
 target 'Messenger' do
   # Uncomment the next line if you're using Swift or would like to use dynamic frameworks
   # use_frameworks!
 
+  rn_path = '../node_modules/react-native'
 
+  # See http://facebook.github.io/react-native/docs/integration-with-existing-apps.html#configuring-cocoapods-dependencies
+  pod 'yoga', path: "#{rn_path}/ReactCommon/yoga/yoga.podspec"
+  pod 'React', path: rn_path, subspecs: [
+    'Core',
+    'CxxBridge',
+    'DevSupport',
+    # 'RCTActionSheet',
+    # 'RCTAnimation',
+    # 'RCTGeolocation',
+    # 'RCTImage',
+    # 'RCTLinkingIOS',
+    # 'RCTNetwork',
+    # 'RCTSettings',
+    # 'RCTText',
+    # 'RCTVibration',
+    # 'RCTWebSocket',
+  ]
   pod 'react-native-image-picker', :path => '../node_modules/react-native-image-picker'
 
 end
 
+
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    if target.name == "React"
+      target.remove_from_project
+    end
+  end
+end
 
