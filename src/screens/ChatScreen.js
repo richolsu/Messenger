@@ -52,14 +52,24 @@ class ChatScreen extends React.Component {
         this.threadsUnscribe();
     }
 
+    existSameSentMessage = (messages, newMessage) => {
+        const filters = messages.filter(oldMessage => {
+            const result = newMessage.senderID == oldMessage.senderID && oldMessage.content == newMessage.content && Math.abs(oldMessage.created - newMessage.created) < 1000;
+            return result;
+        });
+        return filters.length > 0;
+    }
 
     onThreadsCollectionUpdate = (querySnapshot) => {
         const data = [];
         querySnapshot.forEach((doc) => {
             const message = doc.data();
             message.id = doc.id;
-            data.push(message);
-
+            if (!this.existSameSentMessage(data, message)) {
+                data.push(message);
+            }
+            console.log(data);
+            console.log("=====");
         });
 
         this.setState({ threads: data });
@@ -203,7 +213,7 @@ class ChatScreen extends React.Component {
             this.setState({ input: null });
         }
 
-        
+
 
     }
 
@@ -237,9 +247,16 @@ class ChatScreen extends React.Component {
         <TouchableOpacity onPress={() => this.onPressChat(item)}>
             {item.senderID == this.props.user.id &&
                 <View style={styles.sendItemContainer}>
-                    <View style={[styles.itemContent, styles.sendItemContent]}>
-                        <Text style={styles.sendTextMessage}>{item.content}</Text>
-                    </View>
+                    {item.url != '' &&
+                        <View style={[styles.itemContent, styles.sendItemContent]}>
+                            <FastImage style={styles.sendPhotoMessage} source={{ uri: item.url }}/>
+                        </View>
+                    }
+                    {item.url == '' &&
+                        <View style={[styles.itemContent, styles.sendItemContent]}>
+                            <Text style={styles.sendTextMessage}>{item.content}</Text>
+                        </View>
+                    }
                     <FastImage style={styles.userIcon} source={{ uri: item.senderProfilePictureURL }} />
                 </View>
             }
@@ -351,6 +368,15 @@ const styles = StyleSheet.create({
     },
     receiveItemContent: {
         marginLeft: 10,
+    },
+    sendPhotoMessage: {
+        width: 200,
+        height: 150,
+        borderTopRightRadius: 8,
+        borderTopLeftRadius: 8,
+        borderBottomLeftRadius: 8,
+        borderBottomRightRadius: 8,
+        color: AppStyles.colorSet.mainThemeBackgroundColor,
     },
     sendTextMessage: {
         color: AppStyles.colorSet.mainThemeBackgroundColor,
