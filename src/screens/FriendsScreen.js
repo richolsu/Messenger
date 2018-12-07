@@ -35,7 +35,7 @@ class FriendsScreen extends React.Component {
             heAcceptedFriendships: [],
             hiAcceptedFriendships: [],
             friends: [],
-            keyword: null,
+            keyword: '',
             users: [],
             filteredUsers: []
         };

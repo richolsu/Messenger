@@ -35,9 +35,9 @@ class ChatScreen extends React.Component {
             isRenameDialogVisible: false,
             channel: channel,
             threads: [],
-            input: null,
+            input: '',
             photo: null,
-            downloadUrl: null,
+            downloadUrl: '',
         }
 
         this.threadsRef = firebase.firestore().collection('channels').doc(channel.id).collection('threads').orderBy('created', 'desc');
@@ -71,10 +71,9 @@ class ChatScreen extends React.Component {
             if (!this.existSameSentMessage(data, message)) {
                 data.push(message);
             }
-            console.log(data);
-            console.log("=====");
         });
 
+        console.log(data);
         this.setState({ threads: data });
     }
 
@@ -93,7 +92,6 @@ class ChatScreen extends React.Component {
                 .where('user', '==', this.props.user.id)
                 .get().then(querySnapshot => {
                     querySnapshot.forEach(function (doc) {
-                        console.log(doc.data());
                         doc.ref.delete();
                     });
                     this.props.navigation.goBack(null);
@@ -170,7 +168,7 @@ class ChatScreen extends React.Component {
             that.threadsRef = firebase.firestore().collection('channels').doc(channelData.id).collection('threads').orderBy('created', 'desc');
             that.threadsUnscribe = that.threadsRef.onSnapshot(that.onThreadsCollectionUpdate);
 
-            that.setState({ input: null });
+            that.setState({ input: '', downloadUrl: '', photo: '' });
 
         }).catch(function (error) {
             alert(error);
@@ -184,7 +182,6 @@ class ChatScreen extends React.Component {
             let filename = uri.substring(uri.lastIndexOf('/') + 1);
             const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri
             firebase.storage().ref(filename).putFile(uploadUri).then(function (snapshot) {
-                console.log(snapshot);
                 resolve(snapshot.downloadURL);
             });
         });
@@ -218,6 +215,7 @@ class ChatScreen extends React.Component {
                 });
             });
 
+
             const channel = { ...this.state.channel };
 
             delete channel.participants;
@@ -225,17 +223,17 @@ class ChatScreen extends React.Component {
             channel.lastMessageDate = firebase.firestore.FieldValue.serverTimestamp();
 
             firebase.firestore().collection('channels').doc(this.state.channel.id).set(channel);
-            this.setState({ input: null });
+            this.setState({ input: '', downloadUrl: '', photo: '' });
         }
     }
-    
+
     onSend = () => {
 
-        if (this.state.photo) {
+        if (this.state.photo && this.state.photo.length > 0) {
             this.uploadPromise().then((url) => {
-                this.setState({downloadUrl: url});
+                this.setState({ downloadUrl: url });
                 this._send();
-            });            
+            });
         } else {
             this._send();
         }

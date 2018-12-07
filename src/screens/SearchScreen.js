@@ -54,7 +54,7 @@ class SearchScreen extends React.Component {
             heAcceptedFriendships: [],
             hiAcceptedFriendships: [],
             friends: [],
-            keyword: null,
+            keyword: '',
             pendingFriends: [],
             users: [],
             filteredUsers: []
