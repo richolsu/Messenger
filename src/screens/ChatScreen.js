@@ -1,5 +1,5 @@
 import React from 'react';
-import { FlatList, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { FlatList, Image, StyleSheet, Platform, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import TextButton from 'react-native-button';
 import FastImage from 'react-native-fast-image';
 import { connect } from 'react-redux';
@@ -7,6 +7,7 @@ import AppStyles from '../AppStyles';
 import ActionSheet from 'react-native-actionsheet'
 import DialogInput from 'react-native-dialog-input';
 import firebase from 'react-native-firebase';
+import ImagePicker from 'react-native-image-picker';
 
 class ChatScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
@@ -35,6 +36,8 @@ class ChatScreen extends React.Component {
             channel: channel,
             threads: [],
             input: null,
+            photo: null,
+            downloadUrl: null,
         }
 
         this.threadsRef = firebase.firestore().collection('channels').doc(channel.id).collection('threads').orderBy('created', 'desc');
@@ -153,7 +156,7 @@ class ChatScreen extends React.Component {
                     senderID: id,
                     senderLastName: '',
                     senderProfilePictureURL: profilePictureURL,
-                    url: '',
+                    url: that.state.downloadUrl,
                 }
 
                 firebase.firestore().collection('channels').doc(channelData.id).collection('threads').add(data).then(function (docRef) {
@@ -175,7 +178,19 @@ class ChatScreen extends React.Component {
 
     }
 
-    onSend = () => {
+    uploadPromise = () => {
+        const uri = this.state.photo;
+        return new Promise((resolve, reject) => {
+            let filename = uri.substring(uri.lastIndexOf('/') + 1);
+            const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri
+            firebase.storage().ref(filename).putFile(uploadUri).then(function (snapshot) {
+                console.log(snapshot);
+                resolve(snapshot.downloadURL);
+            });
+        });
+    }
+
+    _send = () => {
         if (!this.state.channel.id) {
             this.createOne2OneChannel();
         } else {
@@ -193,7 +208,7 @@ class ChatScreen extends React.Component {
                     senderID: id,
                     senderLastName: '',
                     senderProfilePictureURL: profilePictureURL,
-                    url: '',
+                    url: this.state.downloadUrl,
                 }
 
                 firebase.firestore().collection('channels').doc(this.state.channel.id).collection('threads').add(data).then(function (docRef) {
@@ -212,13 +227,42 @@ class ChatScreen extends React.Component {
             firebase.firestore().collection('channels').doc(this.state.channel.id).set(channel);
             this.setState({ input: null });
         }
+    }
+    
+    onSend = () => {
 
-
-
+        if (this.state.photo) {
+            this.uploadPromise().then((url) => {
+                this.setState({downloadUrl: url});
+                this._send();
+            });            
+        } else {
+            this._send();
+        }
     }
 
     onSelect = () => {
+        const options = {
+            title: 'Select a photo',
+            storageOptions: {
+                skipBackup: true,
+                path: 'images',
+            },
+        };
 
+        ImagePicker.showImagePicker(options, (response) => {
+            if (response.didCancel) {
+                console.log('User cancelled image picker');
+            } else if (response.error) {
+                console.log('ImagePicker Error: ', response.error);
+            } else if (response.customButton) {
+                console.log('User tapped custom button: ', response.customButton);
+            } else {
+                this.setState({
+                    photo: response.uri,
+                });
+            }
+        });
     }
 
     showRenameDialog = (show) => {
@@ -249,7 +293,7 @@ class ChatScreen extends React.Component {
                 <View style={styles.sendItemContainer}>
                     {item.url != '' &&
                         <View style={[styles.itemContent, styles.sendItemContent]}>
-                            <FastImage style={styles.sendPhotoMessage} source={{ uri: item.url }}/>
+                            <FastImage style={styles.sendPhotoMessage} source={{ uri: item.url }} />
                         </View>
                     }
                     {item.url == '' &&
@@ -296,7 +340,7 @@ class ChatScreen extends React.Component {
                         onChangeText={(text) => this.setState({ input: text })}
                         placeholder='Start typing...'
                         underlineColorAndroid='transparent' />
-                    <TouchableOpacity disabled={!this.state.input} style={styles.btnContainer} onPress={this.onSend}>
+                    <TouchableOpacity disabled={!this.state.input && !this.state.photo} style={styles.btnContainer} onPress={this.onSend}>
                         <Image style={styles.icon} source={AppStyles.iconSet.share} />
                     </TouchableOpacity>
                 </View>
@@ -376,7 +420,6 @@ const styles = StyleSheet.create({
         borderTopLeftRadius: 8,
         borderBottomLeftRadius: 8,
         borderBottomRightRadius: 8,
-        color: AppStyles.colorSet.mainThemeBackgroundColor,
     },
     sendTextMessage: {
         color: AppStyles.colorSet.mainThemeBackgroundColor,
