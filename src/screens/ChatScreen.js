@@ -9,11 +9,21 @@ import DialogInput from 'react-native-dialog-input';
 import firebase from 'react-native-firebase';
 
 class ChatScreen extends React.Component {
-    static navigationOptions = ({ navigation }) => ({
-        title: navigation.state.params.channel.name,
-        headerRight:
-            <TextButton style={AppStyles.styleSet.rightNavButton} onPress={() => navigation.state.params.onSetting()} >Setting</TextButton>
-    });
+    static navigationOptions = ({ navigation }) => {
+        let title = navigation.state.params.channel.name;
+        let isOne2OneChannel = false;
+        if (!title) {
+            isOne2OneChannel = true;
+            title = navigation.state.params.channel.participants[0].firstName;
+        }
+        const options = {
+            title: title,
+        }
+        if (!isOne2OneChannel) {
+            options.headerRight = <TextButton style={AppStyles.styleSet.rightNavButton} onPress={() => navigation.state.params.onSetting()} >Setting</TextButton>
+        }
+        return options;
+    };
 
     constructor(props) {
         super(props);
@@ -90,6 +100,7 @@ class ChatScreen extends React.Component {
 
     }
 
+
     createOne2OneChannel = () => {
         const channelData = {
             creator_id: this.props.user.id,
@@ -100,11 +111,11 @@ class ChatScreen extends React.Component {
 
         const that = this;
 
-        firebase.firestore().collection('channels').add(channelData).then(function (docRef) { 
-            
+        firebase.firestore().collection('channels').add(channelData).then(function (docRef) {
+
             const newChannel = that.state.channel;
-            newChannel.id = docRef.id;            
-            that.setState({channel: newChannel});
+            newChannel.id = docRef.id;
+            that.setState({ channel: newChannel });
 
             const participationData = {
                 channel: docRef.id,
@@ -118,7 +129,7 @@ class ChatScreen extends React.Component {
                     user: friend.id,
                 }
                 firebase.firestore().collection('channel_participation').add(participationData);
-            });            
+            });
         }).catch(function (error) {
             alert(error);
         });
@@ -128,7 +139,7 @@ class ChatScreen extends React.Component {
     onSend = () => {
         if (!this.state.channel.id) {
             this.createOne2OneChannel();
-        } 
+        }
         const { id, firstName, profilePictureURL } = this.props.user;
 
         this.state.channel.participants.forEach(friend => {

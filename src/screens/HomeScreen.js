@@ -53,7 +53,7 @@ class HomeScreen extends React.Component {
         this.iAcceptedFriendshipsUnsubscribe = this.iAcceptedFriendshipsRef.onSnapshot(this.onIAcceptedFriendShipsCollectionUpdate);
         this.channelPaticipationUnsubscribe = this.channelPaticipationRef.onSnapshot(this.onChannelParticipationCollectionUpdate);
         this.channelsUnsubscribe = this.channelsRef.onSnapshot(this.onChannelCollectionUpdate);
-        
+
         this.props.navigation.setParams({
             onCreate: this.onCreate
         });
@@ -209,14 +209,21 @@ class HomeScreen extends React.Component {
     }
 
     onPressFriend = (friend) => {
-        console.log(friend);
-        const newChannel = {
-            name: friend.firstName,
-            id: null,
-        };
-        newChannel.participants = [friend];
+        const one2OneChannel = this.state.channels.filter(channel => {
+            return channel.participants.length == 1 && !channel.name && channel.participants[0].id == friend.id;
+        });
+        let channel;
+        if (one2OneChannel.length > 0) {
+            channel = one2OneChannel[0];
+        } else {
+            channel = {
+                name: '',
+                id: null,
+                participants: [friend],
+            };
+        }
 
-        this.props.navigation.navigate('Chat', { channel: newChannel });
+        this.props.navigation.navigate('Chat', { channel: channel });
     }
 
     renderFriendItem = ({ item }) => (
@@ -236,20 +243,24 @@ class HomeScreen extends React.Component {
         this.props.navigation.navigate('Chat', { channel: chat });
     }
 
-    renderChatItem = ({ item }) => (
-        <TouchableOpacity onPress={() => this.onPressChat(item)}>
+    renderChatItem = ({ item }) => {
+        let title = item.name;
+        if (!title) {
+            title = item.participants[0].firstName;
+        }
+        return (<TouchableOpacity onPress={() => this.onPressChat(item)}>
             <View style={styles.chatItemContainer}>
                 <ChatIconView style={styles.chatItemIcon} participants={item.participants} />
                 <View style={styles.chatItemContent}>
-                    <Text style={styles.chatFriendName}>{item.name}</Text>
+                    <Text style={styles.chatFriendName}>{title}</Text>
                     <View style={styles.content}>
                         <Text numberOfLines={1} style={styles.message}>{item.lastMessage}</Text>
                         <Text numberOfLines={1} style={styles.time}> • {AppStyles.utils.timeFormat(item.lastMessageDate)}</Text>
                     </View>
                 </View>
             </View>
-        </TouchableOpacity>
-    );
+        </TouchableOpacity>);
+    };
 
     onTapSearch = () => {
         this.props.navigation.navigate('SearchStack');
@@ -257,7 +268,7 @@ class HomeScreen extends React.Component {
 
     render() {
         return (
-            <ScrollView style={styles.container}>
+            <View style={styles.container}>
                 <TouchableOpacity onPress={this.onTapSearch}>
                     <View style={styles.searchSection}>
                         <Icon style={styles.searchIcon} name="ios-search" size={15} color={AppStyles.colorSet.inputBgColor} />
@@ -289,7 +300,7 @@ class HomeScreen extends React.Component {
                         keyExtractor={item => `${item.id}`}
                     />
                 </View>
-            </ScrollView>
+            </View>
         );
     }
 }
@@ -297,7 +308,6 @@ class HomeScreen extends React.Component {
 const styles = StyleSheet.create({
 
     searchSection: {
-        flex: 1,
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
@@ -345,11 +355,12 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
     },
     chats: {
+        flex: 1,
         padding: 10,
     },
     chatItemContainer: {
         flexDirection: 'row',
-        marginTop: 20,
+        marginBottom: 20,
     },
     chatItemIcon: {
         height: 70,
