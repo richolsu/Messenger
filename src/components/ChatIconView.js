@@ -55,8 +55,7 @@ const styles = StyleSheet.create({
     borderRadius: VIEW_WIDTH / 2,
     width: VIEW_WIDTH,
     left: 0,
-    top: 0,
-    tintColor: AppStyles.colorSet.mainThemeForegroundColor,
+    top: 0,    
   },
   onlineMark: {
     position: 'absolute',

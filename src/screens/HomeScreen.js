@@ -153,8 +153,10 @@ class HomeScreen extends React.Component {
             channelParticipations: data,
         });
 
-        
-
+        if (this.channelsUnsubscribe) {
+            this.channelsUnsubscribe();
+        }            
+        this.channelsUnsubscribe = this.channelsRef.onSnapshot(this.onChannelCollectionUpdate);
     }
 
     onChannelCollectionUpdate = (querySnapshot) => {
@@ -193,11 +195,16 @@ class HomeScreen extends React.Component {
                     channelResolve();
                 }
             }));
+            
         });
 
-        Promise.all(channelPromiseArray).then(values => {
+        Promise.all(channelPromiseArray).then(values => {            
+            const sortedData = data.sort((a, b) => {
+                return b.lastMessageDate - a.lastMessageDate;
+            });
+
             this.setState({
-                channels: data,
+                channels: sortedData,
             });
         });
 

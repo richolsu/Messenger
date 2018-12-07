@@ -109,13 +109,15 @@ class ChatScreen extends React.Component {
             lastMessageDate: firebase.firestore.FieldValue.serverTimestamp()
         };
 
+        const { id, firstName, profilePictureURL } = this.props.user;
+
         const that = this;
 
         firebase.firestore().collection('channels').add(channelData).then(function (docRef) {
 
-            const newChannel = that.state.channel;
-            newChannel.id = docRef.id;
-            that.setState({ channel: newChannel });
+            channelData.id = docRef.id;
+            channelData.participants = that.state.channel.participants;
+            that.setState({ channel: channelData });
 
             const participationData = {
                 channel: docRef.id,
@@ -123,13 +125,40 @@ class ChatScreen extends React.Component {
             }
             firebase.firestore().collection('channel_participation').add(participationData);
 
-            that.state.channel.participants.forEach(friend => {
+            channelData.participants.forEach(friend => {
                 const participationData = {
                     channel: docRef.id,
                     user: friend.id,
                 }
                 firebase.firestore().collection('channel_participation').add(participationData);
+
+                const data = {
+                    content: that.state.input,
+                    created: firebase.firestore.FieldValue.serverTimestamp(),
+                    recipientFirstName: friend.firstName,
+                    recipientID: friend.id,
+                    recipientLastName: '',
+                    recipientProfilePictureURL: friend.profilePictureURL,
+                    senderFirstName: firstName,
+                    senderID: id,
+                    senderLastName: '',
+                    senderProfilePictureURL: profilePictureURL,
+                    url: '',
+                }
+
+                firebase.firestore().collection('channels').doc(channelData.id).collection('threads').add(data).then(function (docRef) {
+                    // alert('Successfully sent friend request!');
+                }).catch(function (error) {
+                    alert(error);
+                });
+
             });
+
+            that.threadsRef = firebase.firestore().collection('channels').doc(channelData.id).collection('threads').orderBy('created', 'desc');
+            that.threadsUnscribe = that.threadsRef.onSnapshot(that.onThreadsCollectionUpdate);
+
+            that.setState({ input: null });
+
         }).catch(function (error) {
             alert(error);
         });
@@ -139,40 +168,43 @@ class ChatScreen extends React.Component {
     onSend = () => {
         if (!this.state.channel.id) {
             this.createOne2OneChannel();
-        }
-        const { id, firstName, profilePictureURL } = this.props.user;
+        } else {
+            const { id, firstName, profilePictureURL } = this.props.user;
 
-        this.state.channel.participants.forEach(friend => {
-            const data = {
-                content: this.state.input,
-                created: firebase.firestore.FieldValue.serverTimestamp(),
-                recipientFirstName: friend.firstName,
-                recipientID: friend.id,
-                recipientLastName: '',
-                recipientProfilePictureURL: friend.profilePictureURL,
-                senderFirstName: firstName,
-                senderID: id,
-                senderLastName: '',
-                senderProfilePictureURL: profilePictureURL,
-                url: '',
-            }
+            this.state.channel.participants.forEach(friend => {
+                const data = {
+                    content: this.state.input,
+                    created: firebase.firestore.FieldValue.serverTimestamp(),
+                    recipientFirstName: friend.firstName,
+                    recipientID: friend.id,
+                    recipientLastName: '',
+                    recipientProfilePictureURL: friend.profilePictureURL,
+                    senderFirstName: firstName,
+                    senderID: id,
+                    senderLastName: '',
+                    senderProfilePictureURL: profilePictureURL,
+                    url: '',
+                }
 
-            firebase.firestore().collection('channels').doc(this.state.channel.id).collection('threads').add(data).then(function (docRef) {
-                // alert('Successfully sent friend request!');
-            }).catch(function (error) {
-                alert(error);
+                firebase.firestore().collection('channels').doc(this.state.channel.id).collection('threads').add(data).then(function (docRef) {
+                    // alert('Successfully sent friend request!');
+                }).catch(function (error) {
+                    alert(error);
+                });
             });
-        });
 
-        const channel = { ...this.state.channel };
+            const channel = { ...this.state.channel };
 
-        delete channel.participants;
-        channel.lastMessage = this.state.input;
-        channel.lastMessageDate = firebase.firestore.FieldValue.serverTimestamp();
+            delete channel.participants;
+            channel.lastMessage = this.state.input;
+            channel.lastMessageDate = firebase.firestore.FieldValue.serverTimestamp();
 
-        firebase.firestore().collection('channels').doc(this.state.channel.id).set(channel);
+            firebase.firestore().collection('channels').doc(this.state.channel.id).set(channel);
+            this.setState({ input: null });
+        }
 
-        this.setState({ input: null });
+        
+
     }
 
     onSelect = () => {
