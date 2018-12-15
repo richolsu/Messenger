@@ -253,7 +253,9 @@ class HomeScreen extends React.Component {
     renderChatItem = ({ item }) => {
         let title = item.name;
         if (!title) {
-            title = item.participants[0].firstName;
+            if (item.participants.length > 0) {
+                title = item.participants[0].firstName;
+            }            
         }
         return (<TouchableOpacity onPress={() => this.onPressChat(item)}>
             <View style={styles.chatItemContainer}>

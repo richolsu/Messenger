@@ -8,6 +8,7 @@ import ActionSheet from 'react-native-actionsheet'
 import DialogInput from 'react-native-dialog-input';
 import firebase from 'react-native-firebase';
 import ImagePicker from 'react-native-image-picker';
+import moment from 'moment';
 
 class ChatScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
@@ -56,25 +57,31 @@ class ChatScreen extends React.Component {
     }
 
     existSameSentMessage = (messages, newMessage) => {
-        const filters = messages.filter(oldMessage => {
-            const result = newMessage.senderID == oldMessage.senderID && oldMessage.content == newMessage.content && Math.abs(oldMessage.created - newMessage.created) < 1000;
-            return result;
-        });
-        return filters.length > 0;
+        for (let i = 0; i < messages.length; i++) {
+            const temp = messages[i];
+            if (newMessage.senderID == temp.senderID && temp.content == newMessage.content && temp.created == newMessage.created) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     onThreadsCollectionUpdate = (querySnapshot) => {
+
         const data = [];
         querySnapshot.forEach((doc) => {
             const message = doc.data();
             message.id = doc.id;
+
             if (!this.existSameSentMessage(data, message)) {
                 data.push(message);
             }
+
         });
 
-        console.log(data);
         this.setState({ threads: data });
+
     }
 
     onSettingActionDone = (index) => {
@@ -135,7 +142,7 @@ class ChatScreen extends React.Component {
                 user: that.props.user.id,
             }
             firebase.firestore().collection('channel_participation').add(participationData);
-
+            let created = Date.now();
             channelData.participants.forEach(friend => {
                 const participationData = {
                     channel: docRef.id,
@@ -145,7 +152,7 @@ class ChatScreen extends React.Component {
 
                 const data = {
                     content: that.state.input,
-                    created: firebase.firestore.FieldValue.serverTimestamp(),
+                    created: created,
                     recipientFirstName: friend.firstName,
                     recipientID: friend.id,
                     recipientLastName: '',
@@ -192,11 +199,11 @@ class ChatScreen extends React.Component {
             this.createOne2OneChannel();
         } else {
             const { id, firstName, profilePictureURL } = this.props.user;
-
+            let created = Date.now();
             this.state.channel.participants.forEach(friend => {
                 const data = {
                     content: this.state.input,
-                    created: firebase.firestore.FieldValue.serverTimestamp(),
+                    created: created,
                     recipientFirstName: friend.firstName,
                     recipientID: friend.id,
                     recipientLastName: '',
@@ -215,11 +222,15 @@ class ChatScreen extends React.Component {
                 });
             });
 
+            let lastMessage = this.state.downloadUrl;
+            if (!lastMessage) {
+                lastMessage = this.state.input;
+            }
 
             const channel = { ...this.state.channel };
 
             delete channel.participants;
-            channel.lastMessage = this.state.input;
+            channel.lastMessage = lastMessage;
             channel.lastMessageDate = firebase.firestore.FieldValue.serverTimestamp();
 
             firebase.firestore().collection('channels').doc(this.state.channel.id).set(channel);
@@ -228,15 +239,7 @@ class ChatScreen extends React.Component {
     }
 
     onSend = () => {
-
-        if (this.state.photo && this.state.photo.length > 0) {
-            this.uploadPromise().then((url) => {
-                this.setState({ downloadUrl: url });
-                this._send();
-            });
-        } else {
-            this._send();
-        }
+        this._send();
     }
 
     onSelect = () => {
@@ -248,6 +251,8 @@ class ChatScreen extends React.Component {
             },
         };
 
+        const { id, firstName, profilePictureURL } = this.props.user;
+
         ImagePicker.showImagePicker(options, (response) => {
             if (response.didCancel) {
                 console.log('User cancelled image picker');
@@ -256,8 +261,25 @@ class ChatScreen extends React.Component {
             } else if (response.customButton) {
                 console.log('User tapped custom button: ', response.customButton);
             } else {
+
+                const data = {
+                    content: '',
+                    created: Date.now(),
+                    senderFirstName: firstName,
+                    senderID: id,
+                    senderLastName: '',
+                    senderProfilePictureURL: profilePictureURL,
+                    url: 'http://fake',
+                }
+
                 this.setState({
                     photo: response.uri,
+                    threads: [data, ...this.state.threads],
+                });
+
+                this.uploadPromise().then((url) => {
+                    this.setState({ downloadUrl: url });
+                    this._send();
                 });
             }
         });
@@ -305,9 +327,17 @@ class ChatScreen extends React.Component {
             {item.senderID != this.props.user.id &&
                 <View style={styles.receiveItemContainer}>
                     <FastImage style={styles.userIcon} source={{ uri: item.senderProfilePictureURL }} />
-                    <View style={[styles.itemContent, styles.receiveItemContent]}>
-                        <Text style={styles.receiveTextMessage}>{item.content}</Text>
-                    </View>
+                    {item.url != '' &&
+                        <View style={[styles.itemContent, styles.receiveItemContent]}>
+                            <FastImage style={styles.receivePhotoMessage} source={{ uri: item.url }} />
+                        </View>
+                    }
+                    {item.url == '' &&
+                        <View style={[styles.itemContent, styles.receiveItemContent]}>
+                            <Text style={styles.receiveTextMessage}>{item.content}</Text>
+                        </View>
+                    }
+
                 </View>
             }
         </TouchableOpacity>
@@ -412,6 +442,14 @@ const styles = StyleSheet.create({
         marginLeft: 10,
     },
     sendPhotoMessage: {
+        width: 200,
+        height: 150,
+        borderTopRightRadius: 8,
+        borderTopLeftRadius: 8,
+        borderBottomLeftRadius: 8,
+        borderBottomRightRadius: 8,
+    },
+    receivePhotoMessage: {
         width: 200,
         height: 150,
         borderTopRightRadius: 8,

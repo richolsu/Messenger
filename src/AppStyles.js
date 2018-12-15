@@ -94,6 +94,7 @@ const _functions = {
   }
 }
 
+
 const StyleDict = {
   colorSet: _colorSet,
   iconSet: _iconSet,
