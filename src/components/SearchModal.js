@@ -255,9 +255,9 @@ class SearchModal extends React.Component {
                                 inputStyle={AppStyles.styleSet.searchBar.input}
                                 showLoading
                                 autoFocus={true}
-                                // clearIcon={true}
+                                clearIcon={true}
                                 searchIcon={true}
-                                value={this.state.keyExtractor}
+                                value={this.state.keyword}
                                 onChangeText={(text) => this.onSearch(text)}
                                 onClear={this.onClear}
                                 placeholder='Search' />
