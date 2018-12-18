@@ -1,4 +1,4 @@
-import { Dimensions } from 'react-native';
+import { Dimensions, Platform } from 'react-native';
 import moment from 'moment';
 
 const WINDOW_WIDTH = Dimensions.get('window').width;
@@ -67,7 +67,7 @@ const _styleSet = {
   },
   searchBar: {
     container: {
-      marginLeft: 30,
+      marginLeft: Platform.OS === 'ios' ? 30 : 0,
       backgroundColor: 'transparent',
       borderBottomColor: 'transparent',
       borderTopColor: 'transparent',

@@ -489,8 +489,8 @@ const styles = StyleSheet.create({
         borderTopWidth: 2,
         borderTopColor: AppStyles.colorSet.hairlineColor,
         flexDirection: 'row',
+        marginBottom: 10,
     },
-
     icon: {
         tintColor: AppStyles.colorSet.mainThemeForegroundColor,
         width: 25,
