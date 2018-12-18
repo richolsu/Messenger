@@ -8,6 +8,7 @@ import apiData from '../dummy_data.json';
 import ChatIconView from '../components/ChatIconView';
 import firebase from 'react-native-firebase';
 import Icon from 'react-native-vector-icons/Ionicons';
+import SearchModal from '../components/SearchModal';
 
 class HomeScreen extends React.Component {
     static navigationOptions = ({ navigation }) => ({
@@ -25,6 +26,7 @@ class HomeScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            searchModalVisible: false,
             heAcceptedFriendships: [],
             hiAcceptedFriendships: [],
             friends: [],
@@ -271,7 +273,11 @@ class HomeScreen extends React.Component {
     };
 
     onTapSearch = () => {
-        this.props.navigation.navigate('SearchStack');
+        this.setState({searchModalVisible: true});
+    }
+
+    onSearchCancel = () => {
+        this.setState({ searchModalVisible: false });
     }
 
     render() {
@@ -309,6 +315,9 @@ class HomeScreen extends React.Component {
                         keyExtractor={item => `${item.id}`}
                     />
                 </View>
+                {this.state.searchModalVisible &&
+                    <SearchModal categories={this.state.categories} onCancel={this.onSearchCancel}></SearchModal>
+                }
             </ScrollView>
         );
     }

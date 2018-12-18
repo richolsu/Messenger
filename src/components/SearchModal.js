@@ -1,5 +1,5 @@
 import React from 'react';
-import { FlatList, TouchableOpacity, Image, StyleSheet, Text, View } from 'react-native';
+import { FlatList, TouchableOpacity, Modal, StyleSheet, Text, View } from 'react-native';
 import { SearchBar } from "react-native-elements";
 import AppStyles from '../AppStyles';
 import FastImage from 'react-native-fast-image';
@@ -11,27 +11,7 @@ const REQUEST_NONE = 0;
 const REQUEST_TO_HIM = 1;
 const REQUEST_TO_ME = 2;
 
-class SearchScreen extends React.Component {
-    static navigationOptions = ({ navigation }) => {
-        const { params = {} } = navigation.state;
-        return {
-            headerLeft:
-                <TouchableOpacity style={AppStyles.styleSet.menuBtn.container} onPress={() => { navigation.openDrawer() }} >
-                    <Image style={AppStyles.styleSet.menuBtn.icon} source={AppStyles.iconSet.menu} />
-                </TouchableOpacity>,
-            headerTitle:
-                <SearchBar
-                    containerStyle={AppStyles.styleSet.searchBar.container}
-                    inputStyle={AppStyles.styleSet.searchBar.input}
-                    showLoading
-                    autoFocus={true}
-                    clearIcon={true}
-                    searchIcon={true}
-                    onChangeText={(text) => params.handleSearch(text)}
-                    // onClear={alert('onClear')}
-                    placeholder='Search' />,
-        }
-    };
+class SearchModal extends React.Component {
 
     constructor(props) {
         super(props);
@@ -69,9 +49,6 @@ class SearchScreen extends React.Component {
         this.toHimPendingFriendshipssUnsubscribe = this.toHimPendingFriendshipsRef.onSnapshot(this.onPendingFriendShipsCollectionUpdate);
         this.heAcceptedFriendshipssUnsubscribe = this.heAcceptedFriendshipsRef.onSnapshot(this.onHeAcceptedFriendShipsCollectionUpdate);
         this.iAcceptedFriendshipssUnsubscribe = this.iAcceptedFriendshipsRef.onSnapshot(this.onIAcceptedFriendShipsCollectionUpdate);
-        this.props.navigation.setParams({
-            handleSearch: this.onSearch
-        });
     }
 
     componentWillUnmount() {
@@ -250,20 +227,53 @@ class SearchScreen extends React.Component {
         </TouchableOpacity>
     );
 
+    onCancel = () => {
+        this.props.onCancel();
+    }
 
     render() {
         return (
-            <FlatList
-                data={this.state.filteredUsers}
-                renderItem={this.renderItem}
-                keyExtractor={item => `${item.id}`}
-                initialNumToRender={5}
-            />
+            <Modal
+                animationType="slide"
+                transparent={false}
+                onRequestClose={this.onCancel}>
+                <View style={styles.searchBar}>
+                    <SearchBar
+                        containerStyle={AppStyles.styleSet.searchBar.container}
+                        inputStyle={AppStyles.styleSet.searchBar.input}
+                        showLoading
+                        autoFocus={true}
+                        clearIcon={true}
+                        searchIcon={true}
+                        onChangeText={(text) => this.onSearch(text)}
+                        // onClear={alert('onClear')}
+                        placeholder='Search' />
+                    <TextButton style={[styles.cancelBtn, AppStyles.styleSet.rightNavButton]} onPress={() => this.onCancel()} >Cancel</TextButton>
+                </View>
+                <FlatList
+                    style={styles.flat}
+                    data={this.state.filteredUsers}
+                    renderItem={this.renderItem}
+                    keyExtractor={item => `${item.id}`}
+                    initialNumToRender={5}
+                />
+            </Modal>
         );
     }
 }
 
 const styles = StyleSheet.create({
+    searchBar: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    cancelBtn: {
+        alignSelf: 'center',
+    },
+    flat: {
+        flex: 1,
+    },
     container: {
         padding: 10,
         alignItems: 'center',
@@ -277,7 +287,7 @@ const styles = StyleSheet.create({
     divider: {
         bottom: 0,
         left: 80,
-        right: 10,        
+        right: 10,
         position: 'absolute',
         height: 0.5,
         backgroundColor: '#e0e0e0',
@@ -327,4 +337,4 @@ const mapStateToProps = state => ({
     user: state.auth.user,
 });
 
-export default connect(mapStateToProps)(SearchScreen);
+export default connect(mapStateToProps)(SearchModal);

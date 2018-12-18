@@ -9,6 +9,7 @@ import DialogInput from 'react-native-dialog-input';
 import firebase from 'react-native-firebase';
 import ImagePicker from 'react-native-image-picker';
 import moment from 'moment';
+import { SafeAreaView } from 'react-navigation';
 
 class ChatScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
@@ -22,7 +23,7 @@ class ChatScreen extends React.Component {
             title: title,
         }
         if (!isOne2OneChannel) {
-            options.headerRight = <TextButton style={AppStyles.styleSet.rightNavButton} onPress={() => navigation.state.params.onSetting()} >Setting</TextButton>
+            options.headerRight = <TextButton style={AppStyles.styleSet.rightNavButton} onPress={() => navigation.state.params.onSetting()} >Settings</TextButton>
         }
         return options;
     };
@@ -312,7 +313,7 @@ class ChatScreen extends React.Component {
             {item.senderID == this.props.user.id &&
                 <View style={styles.sendItemContainer}>
                     {item.url != '' &&
-                        <View style={[styles.itemContent, styles.sendItemContent]}>
+                        <View style={[styles.itemContent, styles.sendItemContent, { padding: 0 }]}>
                             <FastImage style={styles.sendPhotoMessage} source={{ uri: item.url }} />
                         </View>
                     }
@@ -328,7 +329,7 @@ class ChatScreen extends React.Component {
                 <View style={styles.receiveItemContainer}>
                     <FastImage style={styles.userIcon} source={{ uri: item.senderProfilePictureURL }} />
                     {item.url != '' &&
-                        <View style={[styles.itemContent, styles.receiveItemContent]}>
+                        <View style={[styles.itemContent, styles.receiveItemContent, { padding: 0 }]}>
                             <FastImage style={styles.receivePhotoMessage} source={{ uri: item.url }} />
                         </View>
                     }
@@ -343,11 +344,23 @@ class ChatScreen extends React.Component {
         </TouchableOpacity>
     );
 
+    isDisable = () => {
+        return !this.state.input;
+    }
 
+    sendBtnStyle = () => {
+        const style = { padding: 10 };
+        if (this.isDisable()) {
+            style.opacity = 0.2;
+        } else {
+            style.opacity = 1;
+        }
+        return style;
+    }
 
     render() {
         return (
-            <View style={styles.container}>
+            <SafeAreaView style={styles.container}>
                 <View style={styles.chats}>
                     <FlatList
                         inverted
@@ -365,10 +378,11 @@ class ChatScreen extends React.Component {
                     <TextInput
                         style={styles.input}
                         value={this.state.input}
+                        multiline={true}
                         onChangeText={(text) => this.setState({ input: text })}
                         placeholder='Start typing...'
                         underlineColorAndroid='transparent' />
-                    <TouchableOpacity disabled={!this.state.input && !this.state.photo} style={styles.btnContainer} onPress={this.onSend}>
+                    <TouchableOpacity disabled={this.isDisable()} style={this.sendBtnStyle()} onPress={this.onSend}>
                         <Image style={styles.icon} source={AppStyles.iconSet.share} />
                     </TouchableOpacity>
                 </View>
@@ -396,7 +410,7 @@ class ChatScreen extends React.Component {
                     submitInput={(inputText) => { this.onChangeName(inputText) }}
                     closeDialog={() => { this.showRenameDialog(false) }}>
                 </DialogInput>
-            </View>
+            </SafeAreaView>
         );
     }
 }
@@ -425,9 +439,9 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     userIcon: {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
+        width: 34,
+        height: 34,
+        borderRadius: 17,
     },
     sendItemContent: {
         marginRight: 10,
@@ -458,26 +472,36 @@ const styles = StyleSheet.create({
         borderBottomRightRadius: 8,
     },
     sendTextMessage: {
+        fontSize: 16,
         color: AppStyles.colorSet.mainThemeBackgroundColor,
     },
     receiveTextMessage: {
         color: AppStyles.colorSet.mainTextColor,
+        fontSize: 16,
     },
     inputBar: {
+        justifyContent: 'center',
+        alignItems: 'center',
         borderTopWidth: 2,
         borderTopColor: AppStyles.colorSet.hairlineColor,
         flexDirection: 'row',
     },
-    btnContainer: {
-        padding: 10,
-    },
+
     icon: {
         tintColor: AppStyles.colorSet.mainThemeForegroundColor,
         width: 25,
         height: 25,
     },
     input: {
+        margin: 5,
+        paddingTop: 5,
+        paddingBottom: 5,
+        paddingLeft: 20,
+        paddingRight: 20,
         flex: 1,
+        backgroundColor: AppStyles.colorSet.grayBgColor,
+        fontSize: 16,
+        borderRadius: 20,
     }
 
 

@@ -156,12 +156,17 @@ class FriendsScreen extends React.Component {
         });;
     }
 
+    onPressUser = (item) => {
+
+    }
+
     renderItem = ({ item }) => (
         <TouchableOpacity onPress={() => this.onPressUser(item)}>
             <View style={styles.container}>
                 <FastImage style={styles.photo} source={{ uri: item.profilePictureURL }} />
                 <Text style={styles.name}>{item.firstName}</Text>
                 <TextButton style={styles.add} onPress={() => this.onUnfriend(item)} >Unfriend</TextButton>
+                <View style={styles.divider}></View>
             </View>
         </TouchableOpacity>
     );
@@ -170,6 +175,7 @@ class FriendsScreen extends React.Component {
     render() {
         return (
             <FlatList
+                style={styles.flat}
                 data={this.state.filteredUsers}
                 renderItem={this.renderItem}
                 keyExtractor={item => `${item.id}`}
@@ -180,23 +186,34 @@ class FriendsScreen extends React.Component {
 }
 
 const styles = StyleSheet.create({
+    flat: {
+        flex: 1,
+    },
     container: {
         padding: 10,
         alignItems: 'center',
         flexDirection: 'row',
-        borderBottomWidth: 0.5,
-        borderBottomColor: AppStyles.colorSet.mainSubtextColor,
     },
     photo: {
-        height: 40,
-        borderRadius: 20,
-        width: 40,
+        width: 48,
+        height: 48,
+        borderRadius: 24,
     },
     name: {
         marginLeft: 20,
         alignSelf: 'center',
+        fontSize: 17,
+        fontWeight: 'bold',
         flex: 1,
         color: AppStyles.colorSet.mainTextColor,
+    },
+    divider: {
+        bottom: 0,
+        left: 80,
+        right: 10,        
+        position: 'absolute',
+        height: 0.5,
+        backgroundColor: '#e0e0e0',
     },
     add: {
         alignSelf: 'center',
