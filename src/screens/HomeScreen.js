@@ -263,8 +263,7 @@ class HomeScreen extends React.Component {
                 <View style={styles.chatItemContent}>
                     <Text style={styles.chatFriendName}>{title}</Text>
                     <View style={styles.content}>
-                        <Text numberOfLines={1} style={styles.message}>{item.lastMessage}</Text>
-                        <Text numberOfLines={1} style={styles.time}> • {AppStyles.utils.timeFormat(item.lastMessageDate)}</Text>
+                        <Text numberOfLines={1} ellipsizeMode={'middle'} style={styles.message}>{item.lastMessage} · {AppStyles.utils.timeFormat(item.lastMessageDate)}</Text>
                     </View>
                 </View>
             </View>
@@ -385,7 +384,7 @@ const styles = StyleSheet.create({
     },
     chatFriendName: {
         color: AppStyles.colorSet.mainTextColor,
-        fontSize: AppStyles.fontSet.middle,
+        fontSize: 17,
     },
     content: {
         flexDirection: 'row',

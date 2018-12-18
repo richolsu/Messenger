@@ -88,7 +88,12 @@ const _functions = {
   timeFormat: (timeStamp) => {
     time = "";
     if (timeStamp) {
-      time = moment(timeStamp).fromNow();
+      if (moment().diff(timeStamp, 'days') == 0) {
+        time = moment(timeStamp).format('H:mm');
+      } else {
+        time = moment(timeStamp).fromNow();
+      }
+      
     }
     // time = postTime.toUTCString();
     return time;

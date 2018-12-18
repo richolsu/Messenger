@@ -35,9 +35,9 @@ export default class ChatIconView extends React.Component {
     );
   }
 }
-const VIEW_WIDTH = 70;
-const MULTI_ICON_WIDTH = VIEW_WIDTH * 3 / 5;
-const RADIUS_BORDER_WIDTH = 5;
+const VIEW_WIDTH = 60;
+const MULTI_ICON_WIDTH = 40;
+const RADIUS_BORDER_WIDTH = 2;
 const TOP_ICON_WIDTH = MULTI_ICON_WIDTH + RADIUS_BORDER_WIDTH * 2;
 const ONLINE_MARK_WIDTH = 15 + RADIUS_BORDER_WIDTH * 2;
 
