@@ -67,6 +67,7 @@ const _styleSet = {
   },
   searchBar: {
     container: {
+      marginLeft: 30,
       backgroundColor: 'transparent',
       borderBottomColor: 'transparent',
       borderTopColor: 'transparent',

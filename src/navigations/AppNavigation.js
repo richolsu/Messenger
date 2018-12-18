@@ -46,8 +46,6 @@ const LoginStack = createStackNavigator({
 const HomeStack = createStackNavigator({
     Home: { screen: HomeScreen },
     Chat: { screen: ChatScreen },
-    Friends: { screen: FriendsScreen },
-    Search: { screen: SearchScreen },
     CreateGroup: { screen: CreateGroupScreen },
 }, {
         initialRouteName: 'Home',
@@ -67,6 +65,7 @@ const FriendsStack = createStackNavigator({
 }, {
         initialRouteName: 'Friends',
         headerMode: 'float',
+        headerLayoutPreset: 'left',
         navigationOptions: ({ navigation }) => ({
             headerTintColor: AppStyles.colorSet.mainThemeForegroundColor,
             headerTitleStyle: styles.headerTitleStyle,
@@ -80,6 +79,7 @@ const SearchStack = createStackNavigator({
 }, {
         initialRouteName: 'Search',
         headerMode: 'float',
+        headerLayoutPreset: 'left',
         navigationOptions: ({ navigation }) => ({
             headerTintColor: AppStyles.colorSet.mainThemeForegroundColor,
             headerTitleStyle: styles.headerTitleStyle,

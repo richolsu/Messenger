@@ -45,7 +45,7 @@ class SearchModal extends React.Component {
 
 
     componentDidMount() {
-        
+
         this.usersUnsubscribe = this.usersRef.onSnapshot(this.onUsersCollectionUpdate);
         this.toMePendingFriendshipssUnsubscribe = this.toMePendingFriendshipsRef.onSnapshot(this.onPendingFriendShipsCollectionUpdate);
         this.toHimPendingFriendshipssUnsubscribe = this.toHimPendingFriendshipsRef.onSnapshot(this.onPendingFriendShipsCollectionUpdate);
@@ -249,7 +249,7 @@ class SearchModal extends React.Component {
                 <SafeAreaView style={styles.modalView}>
                     <View style={styles.searchBar}>
                         <SearchBar
-                            containerStyle={AppStyles.styleSet.searchBar.container}
+                            containerStyle={[AppStyles.styleSet.searchBar.container, { marginLeft: 0 }]}
                             inputStyle={AppStyles.styleSet.searchBar.input}
                             showLoading
                             autoFocus={true}
