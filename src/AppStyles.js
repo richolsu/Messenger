@@ -10,6 +10,7 @@ const _colorSet = {
   mainTextColor: '#000000',
   mainSubtextColor: '#7e7e7e',
   hairlineColor: '#d6d6d6',
+  grayBgColor: '#f5f5f5',
   onlineMarkColor: '#41C61B',
   inputBgColor: 'rgba(0.9, 0.9, 0.9, 0.1)',
 };
@@ -52,16 +53,16 @@ const _iconSet = {
 const _styleSet = {
   menuBtn: {
     container: {
-      backgroundColor: _colorSet.hairlineColor,
+      backgroundColor: _colorSet.grayBgColor,
       borderRadius: 22.5,
       padding: 10,
       marginLeft: 10,
       marginRight: 10
     },
     icon: {
-      tintColor: _colorSet.mainThemeForegroundColor,
-      width: 25,
-      height: 25,
+      tintColor: 'black',
+      width: 20,
+      height: 20,
     },
   },
   searchBar: {

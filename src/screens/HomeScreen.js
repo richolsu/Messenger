@@ -277,13 +277,14 @@ class HomeScreen extends React.Component {
 
     render() {
         return (
-            <View style={styles.container}>
+            <ScrollView style={styles.container}>
                 <TouchableOpacity onPress={this.onTapSearch}>
                     <View style={styles.searchSection}>
                         <Icon style={styles.searchIcon} name="ios-search" size={15} color={AppStyles.colorSet.inputBgColor} />
                         <TextInput
                             editable={false}
                             style={styles.input}
+                            value={'Search'}
                             placeholder="Search"
                             underlineColorAndroid="transparent"
                         />
@@ -309,7 +310,7 @@ class HomeScreen extends React.Component {
                         keyExtractor={item => `${item.id}`}
                     />
                 </View>
-            </View>
+            </ScrollView>
         );
     }
 }
@@ -320,7 +321,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: AppStyles.colorSet.inputBgColor,
+        backgroundColor: AppStyles.colorSet.grayBgColor,
         margin: 8,
         borderRadius: 8,
     },
@@ -332,6 +333,7 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 5,
         paddingLeft: 0,
+        fontSize: 16,
         backgroundColor: 'transparent',
     },
     container: {
