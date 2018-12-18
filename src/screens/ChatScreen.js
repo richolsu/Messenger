@@ -11,6 +11,7 @@ import ImagePicker from 'react-native-image-picker';
 import moment from 'moment';
 import { SafeAreaView } from 'react-navigation';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { KeyboardAwareView } from 'react-native-keyboard-aware-view';
 
 class ChatScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
@@ -361,18 +362,18 @@ class ChatScreen extends React.Component {
 
     render() {
         return (
-            <KeyboardAwareScrollView>
-                <SafeAreaView style={styles.container}>
-                    <View style={styles.chats}>
-                        <FlatList
-                            inverted
-                            vertical
-                            showsVerticalScrollIndicator={false}
-                            data={this.state.threads}
-                            renderItem={this.renderChatItem}
-                            keyExtractor={item => `${item.id}`}
-                        />
-                    </View>
+
+            <SafeAreaView style={styles.container}>
+                <KeyboardAwareView style={styles.chats}>
+                    <FlatList
+                        inverted
+                        vertical
+                        showsVerticalScrollIndicator={false}
+                        data={this.state.threads}
+                        renderItem={this.renderChatItem}
+                        keyExtractor={item => `${item.id}`}
+                    />
+
                     <View style={styles.inputBar}>
                         <TouchableOpacity style={styles.btnContainer} onPress={this.onSelect}>
                             <Image style={styles.icon} source={AppStyles.iconSet.camera_filled} />
@@ -388,32 +389,32 @@ class ChatScreen extends React.Component {
                             <Image style={styles.icon} source={AppStyles.iconSet.share} />
                         </TouchableOpacity>
                     </View>
-                    <ActionSheet
-                        ref={o => this.settingActionSheet = o}
-                        title={'Group Settings'}
-                        options={['Rename Group', 'Leave Group', 'Cancel']}
-                        cancelButtonIndex={2}
-                        destructiveButtonIndex={1}
-                        onPress={(index) => { this.onSettingActionDone(index) }}
-                    />
-                    <ActionSheet
-                        ref={o => this.confirmLeaveActionSheet = o}
-                        title={'Are you sure?'}
-                        options={['Confirm', 'Cancel']}
-                        cancelButtonIndex={1}
-                        destructiveButtonIndex={0}
-                        onPress={(index) => { this.onConfirmActionDone(index) }}
-                    />
-                    <DialogInput isDialogVisible={this.state.isRenameDialogVisible}
-                        title={'Change Name'}
-                        hintInput={this.state.channel.name}
-                        textInputProps={{ selectTextOnFocus: true }}
-                        submitText={'OK'}
-                        submitInput={(inputText) => { this.onChangeName(inputText) }}
-                        closeDialog={() => { this.showRenameDialog(false) }}>
-                    </DialogInput>
-                </SafeAreaView>
-            </KeyboardAwareScrollView>
+                </KeyboardAwareView>
+                <ActionSheet
+                    ref={o => this.settingActionSheet = o}
+                    title={'Group Settings'}
+                    options={['Rename Group', 'Leave Group', 'Cancel']}
+                    cancelButtonIndex={2}
+                    destructiveButtonIndex={1}
+                    onPress={(index) => { this.onSettingActionDone(index) }}
+                />
+                <ActionSheet
+                    ref={o => this.confirmLeaveActionSheet = o}
+                    title={'Are you sure?'}
+                    options={['Confirm', 'Cancel']}
+                    cancelButtonIndex={1}
+                    destructiveButtonIndex={0}
+                    onPress={(index) => { this.onConfirmActionDone(index) }}
+                />
+                <DialogInput isDialogVisible={this.state.isRenameDialogVisible}
+                    title={'Change Name'}
+                    hintInput={this.state.channel.name}
+                    textInputProps={{ selectTextOnFocus: true }}
+                    submitText={'OK'}
+                    submitInput={(inputText) => { this.onChangeName(inputText) }}
+                    closeDialog={() => { this.showRenameDialog(false) }}>
+                </DialogInput>
+            </SafeAreaView>
         );
     }
 }
