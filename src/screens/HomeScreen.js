@@ -286,13 +286,7 @@ class HomeScreen extends React.Component {
                 <TouchableOpacity onPress={this.onTapSearch}>
                     <View style={styles.searchSection}>
                         <Icon style={styles.searchIcon} name="ios-search" size={15} color={AppStyles.colorSet.inputBgColor} />
-                        <TextInput
-                            editable={false}
-                            style={styles.input}
-                            value={'Search'}
-                            placeholder="Search"
-                            underlineColorAndroid="transparent"
-                        />
+                        <Text style={styles.input}>Search</Text>
                     </View>
                 </TouchableOpacity>
                 <View style={styles.friends}>

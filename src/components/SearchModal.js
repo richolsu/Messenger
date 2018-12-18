@@ -45,6 +45,7 @@ class SearchModal extends React.Component {
 
 
     componentDidMount() {
+        
         this.usersUnsubscribe = this.usersRef.onSnapshot(this.onUsersCollectionUpdate);
         this.toMePendingFriendshipssUnsubscribe = this.toMePendingFriendshipsRef.onSnapshot(this.onPendingFriendShipsCollectionUpdate);
         this.toHimPendingFriendshipssUnsubscribe = this.toHimPendingFriendshipsRef.onSnapshot(this.onPendingFriendShipsCollectionUpdate);
@@ -167,7 +168,14 @@ class SearchModal extends React.Component {
         }
     }
 
+    onClear = () => {
+        this.setState({ keyword: '' });
+        const filteredUsers = this.filteredUsers('');
+        this.setState({ filteredUsers: filteredUsers });
+    }
+
     onSearch = (text) => {
+
         this.setState({ keyword: text });
         const filteredUsers = this.filteredUsers(text);
         this.setState({ filteredUsers: filteredUsers });
@@ -238,17 +246,18 @@ class SearchModal extends React.Component {
                 animationType="slide"
                 transparent={false}
                 onRequestClose={this.onCancel}>
-                <SafeAreaView>
+                <SafeAreaView style={styles.modalView}>
                     <View style={styles.searchBar}>
                         <SearchBar
                             containerStyle={AppStyles.styleSet.searchBar.container}
                             inputStyle={AppStyles.styleSet.searchBar.input}
                             showLoading
                             autoFocus={true}
-                            clearIcon={true}
+                            // clearIcon={true}
                             searchIcon={true}
+                            value={this.state.keyExtractor}
                             onChangeText={(text) => this.onSearch(text)}
-                            // onClear={alert('onClear')}
+                            onClear={this.onClear}
                             placeholder='Search' />
                         <TextButton style={[styles.cancelBtn, AppStyles.styleSet.rightNavButton]} onPress={() => this.onCancel()} >Cancel</TextButton>
                     </View>
@@ -266,6 +275,9 @@ class SearchModal extends React.Component {
 }
 
 const styles = StyleSheet.create({
+    modalView: {
+        flex: 1,
+    },
     searchBar: {
         flexDirection: 'row',
         justifyContent: 'center',
