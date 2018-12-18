@@ -6,6 +6,7 @@ import FastImage from 'react-native-fast-image';
 import { connect } from 'react-redux';
 import TextButton from 'react-native-button';
 import firebase from 'react-native-firebase';
+import { SafeAreaView } from 'react-navigation';
 
 const REQUEST_NONE = 0;
 const REQUEST_TO_HIM = 1;
@@ -237,26 +238,28 @@ class SearchModal extends React.Component {
                 animationType="slide"
                 transparent={false}
                 onRequestClose={this.onCancel}>
-                <View style={styles.searchBar}>
-                    <SearchBar
-                        containerStyle={AppStyles.styleSet.searchBar.container}
-                        inputStyle={AppStyles.styleSet.searchBar.input}
-                        showLoading
-                        autoFocus={true}
-                        clearIcon={true}
-                        searchIcon={true}
-                        onChangeText={(text) => this.onSearch(text)}
-                        // onClear={alert('onClear')}
-                        placeholder='Search' />
-                    <TextButton style={[styles.cancelBtn, AppStyles.styleSet.rightNavButton]} onPress={() => this.onCancel()} >Cancel</TextButton>
-                </View>
-                <FlatList
-                    style={styles.flat}
-                    data={this.state.filteredUsers}
-                    renderItem={this.renderItem}
-                    keyExtractor={item => `${item.id}`}
-                    initialNumToRender={5}
-                />
+                <SafeAreaView>
+                    <View style={styles.searchBar}>
+                        <SearchBar
+                            containerStyle={AppStyles.styleSet.searchBar.container}
+                            inputStyle={AppStyles.styleSet.searchBar.input}
+                            showLoading
+                            autoFocus={true}
+                            clearIcon={true}
+                            searchIcon={true}
+                            onChangeText={(text) => this.onSearch(text)}
+                            // onClear={alert('onClear')}
+                            placeholder='Search' />
+                        <TextButton style={[styles.cancelBtn, AppStyles.styleSet.rightNavButton]} onPress={() => this.onCancel()} >Cancel</TextButton>
+                    </View>
+                    <FlatList
+                        style={styles.flat}
+                        data={this.state.filteredUsers}
+                        renderItem={this.renderItem}
+                        keyExtractor={item => `${item.id}`}
+                        initialNumToRender={5}
+                    />
+                </SafeAreaView>
             </Modal>
         );
     }
