@@ -6,6 +6,7 @@ import firebase from 'react-native-firebase';
 import FastImage from 'react-native-fast-image';
 import { connect } from 'react-redux';
 import TextButton from 'react-native-button';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 class FriendsScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
@@ -174,13 +175,15 @@ class FriendsScreen extends React.Component {
 
     render() {
         return (
-            <FlatList
-                style={styles.flat}
-                data={this.state.filteredUsers}
-                renderItem={this.renderItem}
-                keyExtractor={item => `${item.id}`}
-                initialNumToRender={5}
-            />
+            <KeyboardAwareScrollView>
+                <FlatList
+                    style={styles.flat}
+                    data={this.state.filteredUsers}
+                    renderItem={this.renderItem}
+                    keyExtractor={item => `${item.id}`}
+                    initialNumToRender={5}
+                />
+            </KeyboardAwareScrollView>
         );
     }
 }
@@ -210,7 +213,7 @@ const styles = StyleSheet.create({
     divider: {
         bottom: 0,
         left: 80,
-        right: 10,        
+        right: 10,
         position: 'absolute',
         height: 0.5,
         backgroundColor: '#e0e0e0',

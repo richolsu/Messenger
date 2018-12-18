@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import TextButton from 'react-native-button';
 import firebase from 'react-native-firebase';
 import { SafeAreaView } from 'react-navigation';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 const REQUEST_NONE = 0;
 const REQUEST_TO_HIM = 1;
@@ -246,29 +247,31 @@ class SearchModal extends React.Component {
                 animationType="slide"
                 transparent={false}
                 onRequestClose={this.onCancel}>
-                <SafeAreaView style={styles.modalView}>
-                    <View style={styles.searchBar}>
-                        <SearchBar
-                            containerStyle={[AppStyles.styleSet.searchBar.container, { marginLeft: 0 }]}
-                            inputStyle={AppStyles.styleSet.searchBar.input}
-                            showLoading
-                            autoFocus={true}
-                            // clearIcon={true}
-                            searchIcon={true}
-                            value={this.state.keyExtractor}
-                            onChangeText={(text) => this.onSearch(text)}
-                            onClear={this.onClear}
-                            placeholder='Search' />
-                        <TextButton style={[styles.cancelBtn, AppStyles.styleSet.rightNavButton]} onPress={() => this.onCancel()} >Cancel</TextButton>
-                    </View>
-                    <FlatList
-                        style={styles.flat}
-                        data={this.state.filteredUsers}
-                        renderItem={this.renderItem}
-                        keyExtractor={item => `${item.id}`}
-                        initialNumToRender={5}
-                    />
-                </SafeAreaView>
+                <KeyboardAwareScrollView>
+                    <SafeAreaView style={styles.modalView}>
+                        <View style={styles.searchBar}>
+                            <SearchBar
+                                containerStyle={[AppStyles.styleSet.searchBar.container, { marginLeft: 0 }]}
+                                inputStyle={AppStyles.styleSet.searchBar.input}
+                                showLoading
+                                autoFocus={true}
+                                // clearIcon={true}
+                                searchIcon={true}
+                                value={this.state.keyExtractor}
+                                onChangeText={(text) => this.onSearch(text)}
+                                onClear={this.onClear}
+                                placeholder='Search' />
+                            <TextButton style={[styles.cancelBtn, AppStyles.styleSet.rightNavButton]} onPress={() => this.onCancel()} >Cancel</TextButton>
+                        </View>
+                        <FlatList
+                            style={styles.flat}
+                            data={this.state.filteredUsers}
+                            renderItem={this.renderItem}
+                            keyExtractor={item => `${item.id}`}
+                            initialNumToRender={5}
+                        />
+                    </SafeAreaView>
+                </KeyboardAwareScrollView>
             </Modal>
         );
     }

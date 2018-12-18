@@ -6,6 +6,7 @@ import FastImage from 'react-native-fast-image';
 import { connect } from 'react-redux';
 import TextButton from 'react-native-button';
 import firebase from 'react-native-firebase';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 const REQUEST_NONE = 0;
 const REQUEST_TO_HIM = 1;
@@ -253,12 +254,14 @@ class SearchScreen extends React.Component {
 
     render() {
         return (
-            <FlatList
-                data={this.state.filteredUsers}
-                renderItem={this.renderItem}
-                keyExtractor={item => `${item.id}`}
-                initialNumToRender={5}
-            />
+            <KeyboardAwareScrollView>
+                <FlatList
+                    data={this.state.filteredUsers}
+                    renderItem={this.renderItem}
+                    keyExtractor={item => `${item.id}`}
+                    initialNumToRender={5}
+                />
+            </KeyboardAwareScrollView>
         );
     }
 }
@@ -277,7 +280,7 @@ const styles = StyleSheet.create({
     divider: {
         bottom: 0,
         left: 80,
-        right: 10,        
+        right: 10,
         position: 'absolute',
         height: 0.5,
         backgroundColor: '#e0e0e0',
