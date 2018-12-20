@@ -1,6 +1,5 @@
 import React from 'react';
 import { ScrollView, View, FlatList, Text, TextInput, Image, TouchableOpacity, StyleSheet } from 'react-native';
-import { SearchBar } from "react-native-elements";
 import FastImage from 'react-native-fast-image';
 import { connect } from 'react-redux';
 import AppStyles from '../AppStyles';
@@ -9,6 +8,7 @@ import ChatIconView from '../components/ChatIconView';
 import firebase from 'react-native-firebase';
 import Icon from 'react-native-vector-icons/Ionicons';
 import SearchModal from '../components/SearchModal';
+import CreateGroupModal from '../components/CreateGroupModal';
 
 class HomeScreen extends React.Component {
     static navigationOptions = ({ navigation }) => ({
@@ -27,6 +27,7 @@ class HomeScreen extends React.Component {
         super(props);
         this.state = {
             searchModalVisible: false,
+            createGroupModalVisible: false,
             heAcceptedFriendships: [],
             hiAcceptedFriendships: [],
             friends: [],
@@ -214,7 +215,7 @@ class HomeScreen extends React.Component {
     }
 
     onCreate = () => {
-        this.props.navigation.navigate('CreateGroup');
+        this.setState({createGroupModalVisible: true});
     }
 
     onPressFriend = (friend) => {
@@ -287,6 +288,10 @@ class HomeScreen extends React.Component {
         this.setState({ searchModalVisible: false });
     }
 
+    onCreateGroupCancel = () => {
+        this.setState({ createGroupModalVisible: false });
+    }
+
     render() {
         return (
             <ScrollView style={styles.container}>
@@ -318,6 +323,9 @@ class HomeScreen extends React.Component {
                 </View>
                 {this.state.searchModalVisible &&
                     <SearchModal categories={this.state.categories} onCancel={this.onSearchCancel}></SearchModal>
+                }
+                {this.state.createGroupModalVisible &&
+                    <CreateGroupModal onCancel={this.onCreateGroupCancel}></CreateGroupModal>
                 }
             </ScrollView>
         );

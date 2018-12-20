@@ -1,21 +1,14 @@
 import React from 'react';
-import { FlatList, TouchableOpacity, Image, StyleSheet, Text, View } from 'react-native';
+import { FlatList, TouchableOpacity, Modal, Image, StyleSheet, Text, View } from 'react-native';
 import AppStyles from '../AppStyles';
-import apiData from '../dummy_data.json';
 import FastImage from 'react-native-fast-image';
 import { connect } from 'react-redux';
 import TextButton from 'react-native-button';
 import firebase from 'react-native-firebase';
 import DialogInput from 'react-native-dialog-input';
+import { SafeAreaView } from 'react-navigation';
 
-class CreateGroupScreen extends React.Component {
-    static navigationOptions = ({ navigation }) => {
-        return {
-            title: 'Choose People',
-            headerRight:
-                <TextButton style={{...AppStyles.styleSet.rightNavButton, fontSize: 14, fontWeight:'normal'}} onPress={() => navigation.state.params.onCreate()} >Create Group</TextButton>
-        }
-    };
+class CreateGroupModal extends React.Component {
 
     constructor(props) {
         super(props);
@@ -38,10 +31,6 @@ class CreateGroupScreen extends React.Component {
     componentDidMount() {
         this.heAcceptedFriendshipssUnsubscribe = this.heAcceptedFriendshipsRef.onSnapshot(this.onHeAcceptedFriendShipsCollectionUpdate);
         this.iAcceptedFriendshipssUnsubscribe = this.iAcceptedFriendshipsRef.onSnapshot(this.onIAcceptedFriendShipsCollectionUpdate);
-
-        this.props.navigation.setParams({
-            onCreate: this.onCreate
-        });
     }
 
     componentWillUnmount() {
@@ -150,7 +139,7 @@ class CreateGroupScreen extends React.Component {
             lastMessageDate: firebase.firestore.FieldValue.serverTimestamp()
         };
 
-        const {friends} = this.state;
+        const { friends } = this.state;
         const that = this;
 
         firebase.firestore().collection('channels').add(channelData).then(function (docRef) {
@@ -168,9 +157,9 @@ class CreateGroupScreen extends React.Component {
                 }
                 firebase.firestore().collection('channel_participation').add(participationData);
             });
-            
+
             that.showNameDialog(false);
-            that.props.navigation.goBack(null);
+            that.props.onCancel();
         }).catch(function (error) {
             alert(error);
         });
@@ -189,37 +178,86 @@ class CreateGroupScreen extends React.Component {
         </TouchableOpacity>
     );
 
+    onCancel = () => {
+        this.props.onCancel();
+    }
 
     render() {
         return (
-            <View>
-                <FlatList
-                    data={this.state.friends}
-                    renderItem={this.renderItem}
-                    keyExtractor={item => `${item.id}`}
-                    initialNumToRender={5}
-                />
-                <DialogInput isDialogVisible={this.state.isNameDialogVisible}
-                    title={'Input Group Name'}
-                    hintInput={'Group Name'}
-                    textInputProps={{ selectTextOnFocus: true }}
-                    submitText={'OK'}
-                    submitInput={(inputText) => { this.onSubmitName(inputText) }}
-                    closeDialog={() => { this.showNameDialog(false) }}>
-                </DialogInput>
-            </View>
+            <Modal
+                animationType="slide"
+                transparent={false}
+                onRequestClose={this.onCancel}>
+                <SafeAreaView style={styles.modalView}>
+                    <View style={styles.topBar}>
+                        <Text style={styles.title}>Choose People</Text>
+                        <TouchableOpacity style={[AppStyles.styleSet.menuBtn.container, styles.leftBtn]} onPress={this.onCancel} >
+                            <Image style={AppStyles.styleSet.menuBtn.icon} source={AppStyles.iconSet.delete} />
+                        </TouchableOpacity>
+                        <View style={styles.rightBtn}>
+                            <TextButton style={styles.rightBtnText} onPress={this.onCreate} >Create Group</TextButton>
+                        </View>
+
+                    </View>
+                    <FlatList
+                        data={this.state.friends}
+                        renderItem={this.renderItem}
+                        keyExtractor={item => `${item.id}`}
+                        initialNumToRender={5}
+                    />
+                    <DialogInput isDialogVisible={this.state.isNameDialogVisible}
+                        title={'Input Group Name'}
+                        hintInput={'Group Name'}
+                        textInputProps={{ selectTextOnFocus: true }}
+                        submitText={'OK'}
+                        submitInput={(inputText) => { this.onSubmitName(inputText) }}
+                        closeDialog={() => { this.showNameDialog(false) }}>
+                    </DialogInput>
+
+                </SafeAreaView>
+            </Modal>
         );
     }
 }
 
 
 const styles = StyleSheet.create({
+    modalView: {
+        flex: 1,
+    },
     container: {
         padding: 10,
         alignItems: 'center',
         flexDirection: 'row',
         borderBottomWidth: 0.5,
         borderBottomColor: AppStyles.colorSet.mainSubtextColor,
+    },
+    topBar: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 10,
+    },
+    rightBtn: {
+        position: 'absolute',
+        top: 15,
+        right: 10,
+    },
+    rightBtnText: {
+        fontSize: 14,
+        color: '#007aff',
+        fontWeight: 'normal',
+    },
+    leftBtn: {
+        position: 'absolute',
+        left: 0,
+    },
+    title: {
+        flex: 1,
+        fontSize: 20,
+        color: 'black',
+        fontWeight: 'bold',
+        textAlign: 'center',
     },
     photo: {
         height: 40,
@@ -245,4 +283,4 @@ const mapStateToProps = state => ({
     user: state.auth.user,
 });
 
-export default connect(mapStateToProps)(CreateGroupScreen);
+export default connect(mapStateToProps)(CreateGroupModal);
