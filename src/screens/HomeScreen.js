@@ -240,7 +240,7 @@ class HomeScreen extends React.Component {
         <TouchableOpacity onPress={() => this.onPressFriend(item)}>
             <View style={styles.friendItemContainer}>
                 <FastImage style={styles.friendPhoto} source={{ uri: item.profilePictureURL }} />
-                <Text style={styles.friendName}>{item.firstName}</Text>
+                <Text style={styles.friendName}>{item.firstName.split(' ')[0]}</Text>
             </View>
         </TouchableOpacity>
     );
