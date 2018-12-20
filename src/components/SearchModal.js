@@ -163,7 +163,7 @@ class SearchModal extends React.Component {
     filteredUsers = (keyword) => {
         if (keyword) {
             return this.state.users.filter(user => {
-                return user.firstName && user.firstName.indexOf(keyword) >= 0;
+                return user.firstName && user.firstName.toLowerCase().indexOf(keyword.toLowerCase()) >= 0;
             });
         } else {
             return this.state.users;

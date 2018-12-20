@@ -28,8 +28,9 @@ class SearchScreen extends React.Component {
                     autoFocus={true}
                     clearIcon={true}
                     searchIcon={true}
+                    value={params.keyword}
                     onChangeText={(text) => params.handleSearch(text)}
-                    // onClear={alert('onClear')}
+                    onClear={params.handleClear}
                     placeholder='Search' />,
         }
     };
@@ -71,7 +72,9 @@ class SearchScreen extends React.Component {
         this.heAcceptedFriendshipssUnsubscribe = this.heAcceptedFriendshipsRef.onSnapshot(this.onHeAcceptedFriendShipsCollectionUpdate);
         this.iAcceptedFriendshipssUnsubscribe = this.iAcceptedFriendshipsRef.onSnapshot(this.onIAcceptedFriendShipsCollectionUpdate);
         this.props.navigation.setParams({
-            handleSearch: this.onSearch
+            handleSearch: this.onSearch,
+            handleClear: this.onClear,
+            keyword: '',
         });
     }
 
@@ -183,7 +186,7 @@ class SearchScreen extends React.Component {
     filteredUsers = (keyword) => {
         if (keyword) {
             return this.state.users.filter(user => {
-                return user.firstName.indexOf(keyword) >= 0;
+                return user.firstName && user.firstName.toLowerCase().indexOf(keyword.toLowerCase()) >= 0;
             });
         } else {
             return this.state.users;
@@ -193,6 +196,15 @@ class SearchScreen extends React.Component {
     onSearch = (text) => {
         this.setState({ keyword: text });
         const filteredUsers = this.filteredUsers(text);
+        this.setState({ filteredUsers: filteredUsers });
+        this.props.navigation.setParams({
+            keyword: text,
+        });
+    }
+
+    onClear = () => {
+        this.setState({ keyword: '' });
+        const filteredUsers = this.filteredUsers('');
         this.setState({ filteredUsers: filteredUsers });
     }
 
