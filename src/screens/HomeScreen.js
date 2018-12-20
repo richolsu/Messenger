@@ -252,6 +252,13 @@ class HomeScreen extends React.Component {
         this.props.navigation.navigate('Chat', { channel: chat });
     }
 
+    formatMessage = (item) => {
+        if (item.lastMessage.startsWith('https://firebasestorage.googleapis.com')) {
+            return 'Someone sent a photo.';
+        }else{
+            return item.lastMessage;
+        }
+    }
     renderChatItem = ({ item }) => {
         let title = item.name;
         if (!title) {
@@ -265,7 +272,7 @@ class HomeScreen extends React.Component {
                 <View style={styles.chatItemContent}>
                     <Text style={styles.chatFriendName}>{title}</Text>
                     <View style={styles.content}>
-                        <Text numberOfLines={1} ellipsizeMode={'middle'} style={styles.message}>{item.lastMessage} · {AppStyles.utils.timeFormat(item.lastMessageDate)}</Text>
+                        <Text numberOfLines={1} ellipsizeMode={'middle'} style={styles.message}>{this.formatMessage(item)} · {AppStyles.utils.timeFormat(item.lastMessageDate)}</Text>
                     </View>
                 </View>
             </View>

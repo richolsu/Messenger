@@ -1,8 +1,10 @@
 import React from 'react';
-import { StyleSheet, Text, TextInput, View } from 'react-native';
+import { StyleSheet, ScrollView, Text, TextInput, View } from 'react-native';
 import Button from 'react-native-button';
 import AppStyles from '../AppStyles';
 import firebase from 'react-native-firebase';
+import { KeyboardAwareView } from 'react-native-keyboard-aware-view';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 class SignupScreen extends React.Component {
 
@@ -63,19 +65,22 @@ class SignupScreen extends React.Component {
         return (
             <View style={styles.container}>
                 <Text style={[styles.title, styles.leftTitle]}>Create new account</Text>
-                <View style={styles.InputContainer}>
-                    <TextInput style={styles.body} placeholder="Full Name" onChangeText={(text) => this.setState({ fullname: text })} value={this.state.fullname} underlineColorAndroid='transparent' />
-                </View>
-                <View style={styles.InputContainer}>
-                    <TextInput style={styles.body} placeholder="Phone Number" onChangeText={(text) => this.setState({ phone: text })} value={this.state.phone} underlineColorAndroid='transparent' />
-                </View>
-                <View style={styles.InputContainer}>
-                    <TextInput style={styles.body} placeholder="E-mail Address" onChangeText={(text) => this.setState({ email: text })} value={this.state.email} underlineColorAndroid='transparent' />
-                </View>
-                <View style={styles.InputContainer}>
-                    <TextInput style={styles.body} placeholder="Password" secureTextEntry={true} onChangeText={(text) => this.setState({ password: text })} value={this.state.password} underlineColorAndroid='transparent' />
-                </View>
-                <Button containerStyle={[styles.facebookContainer, { marginTop: 50 }]} style={styles.facebookText} onPress={() => this.onRegister()}>Sign Up</Button>
+                <KeyboardAwareScrollView style={{ flex: 1, width: '100%' }} >
+                    <View style={styles.InputContainer}>
+                        <TextInput style={styles.body} placeholder="Full Name" onChangeText={(text) => this.setState({ fullname: text })} value={this.state.fullname} underlineColorAndroid='transparent' />
+                    </View>
+                    <View style={styles.InputContainer}>
+                        <TextInput style={styles.body} placeholder="Phone Number" onChangeText={(text) => this.setState({ phone: text })} value={this.state.phone} underlineColorAndroid='transparent' />
+                    </View>
+                    <View style={styles.InputContainer}>
+                        <TextInput style={styles.body} placeholder="E-mail Address" onChangeText={(text) => this.setState({ email: text })} value={this.state.email} underlineColorAndroid='transparent' />
+                    </View>
+                    <View style={styles.InputContainer}>
+                        <TextInput style={styles.body} placeholder="Password" secureTextEntry={true} onChangeText={(text) => this.setState({ password: text })} value={this.state.password} underlineColorAndroid='transparent' />
+                    </View>
+                    <Button containerStyle={[styles.facebookContainer, { marginTop: 50 }]} style={styles.facebookText} onPress={() => this.onRegister()}>Sign Up</Button>
+
+                </KeyboardAwareScrollView>
             </View>
         );
     }
@@ -86,6 +91,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
+        justifyContent: 'center',
     },
     title: {
         fontSize: AppStyles.fontSet.xlarge,
@@ -124,6 +130,7 @@ const styles = StyleSheet.create({
         marginTop: 30,
         borderWidth: 1,
         borderStyle: 'solid',
+        alignSelf: 'center',
         borderRadius: AppStyles.sizeSet.radius
     },
     body: {
@@ -133,6 +140,7 @@ const styles = StyleSheet.create({
         color: AppStyles.colorSet.mainTextColor
     },
     facebookContainer: {
+        alignSelf: 'center',
         width: AppStyles.sizeSet.buttonWidth,
         backgroundColor: AppStyles.colorSet.mainThemeForegroundColor,
         borderRadius: AppStyles.sizeSet.radius,
