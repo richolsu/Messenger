@@ -13,7 +13,7 @@ class CreateGroupScreen extends React.Component {
         return {
             title: 'Choose People',
             headerRight:
-                <TextButton style={AppStyles.styleSet.rightNavButton} onPress={() => navigation.state.params.onCreate()} >Create Group</TextButton>
+                <TextButton style={{...AppStyles.styleSet.rightNavButton, fontSize: 14, fontWeight:'normal'}} onPress={() => navigation.state.params.onCreate()} >Create Group</TextButton>
         }
     };
 
